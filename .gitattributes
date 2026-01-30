@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+*.lock binary
+package-lock.json binary
+
+*.mjs linguist-vendored
+*.config.js linguist-vendored
+
+*.png binary
+*.jpg binary
+*.ico binary
