@@ -58,8 +58,7 @@
 | `description` | Text | No | イベント詳細 |
 | `distributeAmount` | BigInt | Yes | 参加者に配布される初期資金 |
 | `status` | Enum | Yes | 状態 ('SCHEDULED', 'ACTIVE', 'COMPLETED')。'COMPLETED' になると購入選択肢から除外されます。 |
-| `startDate` | Timestamp | Yes | イベント開始日時（馬券購入可能期間） |
-| `endDate` | Timestamp | Yes | イベント終了日時 |
+| `date` | Date | Yes | 開催日 |
 
 ### `wallets` テーブル
 

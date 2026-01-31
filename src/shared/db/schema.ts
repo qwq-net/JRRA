@@ -88,8 +88,7 @@ export const events = pgTable('event', {
   description: text('description'),
   distributeAmount: bigint('distributeAmount', { mode: 'number' }).notNull(),
   status: eventStatusEnum('status').default('SCHEDULED').notNull(),
-  startDate: timestamp('startDate').notNull(),
-  endDate: timestamp('endDate').notNull(),
+  date: date('date').notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
     .defaultNow()
@@ -124,7 +123,7 @@ export const transactions = pgTable('transaction', {
     .references(() => wallets.id, { onDelete: 'cascade' }),
   type: transactionTypeEnum('type').notNull(),
   amount: bigint('amount', { mode: 'number' }).notNull(),
-  referenceId: uuid('referenceId'), // Event ID or Bet ID
+  referenceId: uuid('referenceId'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
 });
 
