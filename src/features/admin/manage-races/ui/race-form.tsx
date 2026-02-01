@@ -12,6 +12,7 @@ interface RaceFormProps {
     date: string;
     location: string;
     name: string;
+    raceNumber?: number | null;
     distance: number;
     surface: '芝' | 'ダート';
     condition: '良' | '稍重' | '重' | '不良' | null;
@@ -117,6 +118,19 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = true 
           className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
           placeholder="例: ジャパンカップ"
         />
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-gray-700">レース番号（省略可）</label>
+        <input
+          name="raceNumber"
+          type="number"
+          min="1"
+          defaultValue={initialData?.raceNumber || ''}
+          placeholder="自動採番"
+          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
+        />
+        <p className="mt-1 text-xs text-gray-500">未入力の場合は自動で採番されます</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

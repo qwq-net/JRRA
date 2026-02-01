@@ -12,6 +12,7 @@ interface EditRaceDialogProps {
     date: string;
     location: string;
     name: string;
+    raceNumber?: number | null;
     distance: number;
     surface: '芝' | 'ダート';
     condition: '良' | '稍重' | '重' | '不良' | null;

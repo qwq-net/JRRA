@@ -22,7 +22,9 @@ export default async function SokupatPage() {
     },
   });
 
-  const eventGroups = scheduledRaces.reduce(
+  const activeRaces = scheduledRaces.filter((race) => race.event.status !== 'COMPLETED');
+
+  const eventGroups = activeRaces.reduce(
     (acc, race) => {
       const eventId = race.event.id;
       if (!acc[eventId]) {
@@ -34,12 +36,15 @@ export default async function SokupatPage() {
       acc[eventId].races.push(race);
       return acc;
     },
-    {} as Record<string, { event: (typeof scheduledRaces)[0]['event']; races: typeof scheduledRaces }>
+    {} as Record<string, { event: (typeof activeRaces)[0]['event']; races: typeof activeRaces }>
   );
 
-  const sortedEventGroups = Object.values(eventGroups).sort(
-    (a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime()
-  );
+  const sortedEventGroups = Object.values(eventGroups)
+    .sort((a, b) => new Date(b.event.date).getTime() - new Date(a.event.date).getTime())
+    .map((group) => ({
+      ...group,
+      races: group.races.sort((a, b) => (a.raceNumber || 999) - (b.raceNumber || 999)),
+    }));
 
   return (
     <div className="flex flex-col items-center p-4">

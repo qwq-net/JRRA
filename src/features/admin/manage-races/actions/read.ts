@@ -6,7 +6,7 @@ import { desc } from 'drizzle-orm';
 
 export async function getRaces() {
   return db.query.races.findMany({
-    orderBy: (races, { desc }) => [desc(races.date), races.name],
+    orderBy: (races, { asc, desc }) => [asc(races.raceNumber), desc(races.date), races.name],
     with: {
       event: true,
     },

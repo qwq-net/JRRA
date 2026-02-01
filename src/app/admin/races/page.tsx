@@ -1,9 +1,43 @@
-import { CreateRaceDialog, getEvents, RaceList } from '@/features/admin/manage-races';
+import { CreateRaceDialog, getEvents, getRaces } from '@/features/admin/manage-races';
+import { RaceAccordion } from '@/features/admin/manage-races/ui/race-accordion';
 import { Card } from '@/shared/ui';
 import { Suspense } from 'react';
 
 export default async function RacesPage() {
   const events = await getEvents();
+  const races = await getRaces();
+
+  const eventGroups = races.reduce(
+    (acc, race) => {
+      const eventId = race.event.id;
+      if (!acc[eventId]) {
+        acc[eventId] = {
+          id: race.event.id,
+          name: race.event.name,
+          date: race.event.date,
+          status: race.event.status,
+          races: [],
+        };
+      }
+      acc[eventId].races.push(race);
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        id: string;
+        name: string;
+        date: string;
+        status: string;
+        races: typeof races;
+      }
+    >
+  );
+
+  const sortedEventGroups = Object.values(eventGroups).sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   return (
     <div className="space-y-6">
       <div>
@@ -18,7 +52,9 @@ export default async function RacesPage() {
         </div>
 
         <Suspense fallback={<Card className="py-12 text-center text-gray-500">読み込み中...</Card>}>
-          <RaceList events={events} />
+          <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+            <RaceAccordion events={sortedEventGroups} allEvents={events} />
+          </div>
         </Suspense>
       </div>
     </div>

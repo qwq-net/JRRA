@@ -3,6 +3,7 @@
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
 import { races } from '@/shared/db/schema';
+import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { raceSchema } from '../model/schema';
 
@@ -20,6 +21,7 @@ export async function createRace(formData: FormData) {
     date: formData.get('date'),
     location: formData.get('location'),
     name: formData.get('name'),
+    raceNumber: formData.get('raceNumber'),
     distance: formData.get('distance'),
     surface: formData.get('surface'),
     condition: conditionValue && conditionValue !== '' ? conditionValue : undefined,
@@ -30,11 +32,22 @@ export async function createRace(formData: FormData) {
     throw new Error('Invalid Input');
   }
 
+  let raceNumber = parse.data.raceNumber;
+  if (!raceNumber) {
+    const existingRaces = await db.query.races.findMany({
+      where: eq(races.eventId, parse.data.eventId),
+      columns: { raceNumber: true },
+    });
+    const maxNumber = existingRaces.reduce((max, race) => Math.max(max, race.raceNumber || 0), 0);
+    raceNumber = maxNumber + 1;
+  }
+
   await db.insert(races).values({
     eventId: parse.data.eventId,
     date: parse.data.date,
     location: parse.data.location,
     name: parse.data.name,
+    raceNumber,
     distance: parse.data.distance,
     surface: parse.data.surface,
     condition: parse.data.condition,

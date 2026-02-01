@@ -158,6 +158,7 @@ export const races = pgTable('race', {
   date: date('date').notNull(),
   location: text('location').notNull(),
   name: text('name').notNull(),
+  raceNumber: integer('raceNumber'),
   distance: integer('distance').notNull(),
   surface: text('surface').notNull(),
   condition: text('condition'),

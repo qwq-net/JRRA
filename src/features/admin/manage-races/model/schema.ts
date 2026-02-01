@@ -1,3 +1,4 @@
+import { RACE_CONDITIONS, RACE_SURFACES } from '@/shared/types/race';
 import { z } from 'zod';
 
 export const raceSchema = z.object({
@@ -5,9 +6,10 @@ export const raceSchema = z.object({
   date: z.string().min(1),
   location: z.string().min(1),
   name: z.string().min(1),
+  raceNumber: z.coerce.number().int().min(1).optional(),
   distance: z.coerce.number().min(100),
-  surface: z.enum(['芝', 'ダート']),
-  condition: z.enum(['良', '稍重', '重', '不良']).optional(),
+  surface: z.enum(RACE_SURFACES),
+  condition: z.enum(RACE_CONDITIONS).optional(),
   closingAt: z.string().optional().nullable(),
 });
 
