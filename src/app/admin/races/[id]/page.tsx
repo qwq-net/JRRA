@@ -1,4 +1,5 @@
 import { getRaceById } from '@/features/admin/manage-entries/actions';
+import { getPayoutResults } from '@/features/admin/manage-races/actions';
 import { RaceResultForm } from '@/features/admin/manage-races/ui/race-result-form';
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
@@ -6,7 +7,7 @@ import { horses, raceEntries } from '@/shared/db/schema';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
 import { getBracketColor } from '@/shared/utils/bracket';
 import { eq } from 'drizzle-orm';
-import { ChevronLeft } from 'lucide-react';
+import { AlarmClock, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
@@ -17,10 +18,11 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
     redirect('/');
   }
 
-  const race = await getRaceById(id);
+  const [race, payoutResults] = await Promise.all([getRaceById(id), getPayoutResults(id)]);
   if (!race) {
     notFound();
   }
+  const hasPayoutResults = payoutResults.length > 0;
 
   const entriesWithResult = await db
     .select({
@@ -44,11 +46,22 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
         >
           <ChevronLeft className="h-5 w-5 text-gray-600" />
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900">{race.name}</h1>
-          <p className="text-sm text-gray-500">
-            {race.date.replace(/-/g, '/')} @ {race.location}
-          </p>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <p>
+              {race.date.replace(/-/g, '/')} @ {race.location}
+            </p>
+            <div className="flex items-center gap-1 font-medium text-amber-600">
+              <AlarmClock className="h-4 w-4" />
+              <span>
+                締切:{' '}
+                {race.closingAt
+                  ? race.closingAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                  : '手動'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -66,7 +79,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                       key={entry.id}
                       className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 p-2"
                     >
-                      <div className="flex w-10 items-center justify-center text-lg font-black text-gray-300 italic">
+                      <div className="flex w-10 items-center justify-center text-lg font-black text-gray-300">
                         {index + 1}
                       </div>
                       <div className="flex items-center gap-2">
@@ -88,6 +101,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
           ) : entriesWithResult.length > 0 ? (
             <RaceResultForm
               raceId={race.id}
+              hasPayoutResults={hasPayoutResults}
               entries={entriesWithResult.map((e) => ({
                 id: e.id,
                 horseNumber: e.horseNumber,
@@ -99,6 +113,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                 surface: race.surface,
                 distance: race.distance,
                 condition: race.condition,
+                closingAt: race.closingAt ? race.closingAt.toISOString() : null,
               }}
             />
           ) : (
@@ -137,6 +152,8 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                 </div>
               </CardContent>
             </Card>
+
+            {/* 通知ボタン廃止 */}
           </div>
         )}
       </div>

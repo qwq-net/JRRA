@@ -14,15 +14,20 @@ interface RaceFormProps {
     distance: number;
     surface: '芝' | 'ダート';
     condition: '良' | '稍重' | '重' | '不良' | null;
+    closingAt?: Date | string | null;
   };
   onSuccess?: () => void;
+  showClosingAt?: boolean;
 }
 
-export function RaceForm({ initialData, onSuccess }: RaceFormProps) {
+export function RaceForm({ initialData, onSuccess, showClosingAt = true }: RaceFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
   const [surface, setSurface] = useState(initialData?.surface || '芝');
   const [condition, setCondition] = useState(initialData?.condition || '良');
+  const [closingAt, setClosingAt] = useState(
+    initialData?.closingAt ? new Date(initialData.closingAt).toISOString().slice(0, 16) : ''
+  );
 
   async function handleSubmit(formData: FormData) {
     try {
@@ -159,6 +164,24 @@ export function RaceForm({ initialData, onSuccess }: RaceFormProps) {
           ))}
         </div>
       </div>
+
+      {showClosingAt && (
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-700">受付終了時刻</label>
+          <div className="relative">
+            <input
+              name="closingAt"
+              type="datetime-local"
+              value={closingAt}
+              onChange={(e) => setClosingAt(e.target.value)}
+              className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
+            />
+          </div>
+          <p className="mt-1 text-xs text-gray-500">
+            設定した時間になると自動的に投票が締め切られます。未設定の場合は手動での締め切りが必要です。
+          </p>
+        </div>
+      )}
 
       <button
         type="submit"

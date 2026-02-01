@@ -2,7 +2,7 @@
 
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
-import { bets, transactions, wallets } from '@/shared/db/schema';
+import { bets, races, transactions, wallets } from '@/shared/db/schema';
 import { BetDetail } from '@/types/betting';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -21,6 +21,23 @@ export async function placeBet({
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
+  }
+
+  // レースの締切・ステータス確認
+  const race = await db.query.races.findFirst({
+    where: eq(races.id, raceId),
+  });
+
+  if (!race) {
+    throw new Error('Race not found');
+  }
+
+  if (race.status !== 'SCHEDULED') {
+    throw new Error('このレースの受付は終了しています');
+  }
+
+  if (race.closingAt && new Date() > new Date(race.closingAt)) {
+    throw new Error('このレースは締切時刻を過ぎています');
   }
 
   if (amount <= 0) {
@@ -77,4 +94,26 @@ export async function placeBet({
 
   revalidatePath('/mypage');
   revalidatePath(`/races/${raceId}`);
+}
+
+export async function getUserBetsForRace(raceId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  return db.query.bets.findMany({
+    where: (bets, { and, eq }) => and(eq(bets.userId, session.user!.id!), eq(bets.raceId, raceId)),
+    with: {
+      race: {
+        with: {
+          entries: {
+            with: {
+              horse: true,
+            },
+          },
+        },
+      },
+    },
+  });
 }

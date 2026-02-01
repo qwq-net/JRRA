@@ -1,0 +1,37 @@
+import { WalletOverview, getEventWallets } from '@/features/economy/wallet';
+import { auth } from '@/shared/config/auth';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+export default async function WalletPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect('/login');
+  }
+
+  const userWallets = await getEventWallets(session.user.id);
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      <div className="w-full max-w-4xl space-y-8">
+        <div className="flex items-center gap-4">
+          <Link href="/mypage" className="flex items-center gap-1 text-sm font-black text-gray-500 hover:text-gray-900">
+            <ChevronLeft size={16} />
+            マイページへ戻る
+          </Link>
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-black text-gray-900">ウォレット確認</h1>
+          <p className="mt-2 text-gray-500">参加中のイベント資金と利用履歴を確認できます。</p>
+        </div>
+
+        <section>
+          <WalletOverview wallets={userWallets} />
+        </section>
+      </div>
+    </div>
+  );
+}

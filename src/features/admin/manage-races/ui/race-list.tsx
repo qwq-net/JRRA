@@ -12,19 +12,32 @@ export async function RaceList() {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200">
-      <table className="w-full">
+    <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table className="w-full min-w-[800px] border-collapse">
         <thead className="bg-gray-50">
-          <tr>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">開催日</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">場所</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              開催日
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              場所
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               レース名
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">距離</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">馬場</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">状態</th>
-            <th className="w-20 px-4 py-3 text-right text-xs font-semibold tracking-wider text-gray-600 uppercase">
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              距離
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              馬場
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              締切
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              状態
+            </th>
+            <th className="w-24 px-6 py-4 text-right text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               操作
             </th>
           </tr>
@@ -32,20 +45,29 @@ export async function RaceList() {
         <tbody className="divide-y divide-gray-200 bg-white">
           {races.map((race) => (
             <tr key={race.id} className="transition-colors hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm text-gray-900">{race.date.replace(/-/g, '/')}</td>
-              <td className="px-4 py-3 text-sm text-gray-600">{race.location}</td>
-              <td className="px-4 py-3 text-sm font-medium text-gray-900">{race.name}</td>
-              <td className="px-4 py-3 text-sm text-gray-600">
-                <Badge variant="surface" label={race.surface} />
-                <span className="ml-1 text-xs font-bold text-gray-400">{race.distance}m</span>
+              <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                {race.date.replace(/-/g, '/')}
               </td>
-              <td className="px-4 py-3 text-sm text-gray-600">
+              <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-500">{race.location}</td>
+              <td className="px-6 py-4 text-sm font-black whitespace-nowrap text-gray-900">{race.name}</td>
+              <td className="px-6 py-4 text-sm whitespace-nowrap">
+                <Badge variant="surface" label={race.surface} />
+                <span className="ml-1.5 text-xs font-black text-gray-400">{race.distance}m</span>
+              </td>
+              <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <Badge variant="condition" label={race.condition} />
               </td>
-              <td className="px-4 py-3 text-sm">
+              <td className="px-6 py-2 text-sm font-bold whitespace-nowrap text-gray-500">
+                {race.closingAt ? (
+                  new Date(race.closingAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                ) : (
+                  <span className="text-gray-200">-</span>
+                )}
+              </td>
+              <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <Badge variant="status" label={race.status} />
               </td>
-              <td className="px-4 py-3 text-right">
+              <td className="px-6 py-4 text-right whitespace-nowrap">
                 <div className="flex items-center justify-end gap-2">
                   <Link
                     href={`/admin/races/${race.id}`}
@@ -58,6 +80,7 @@ export async function RaceList() {
                       ...race,
                       surface: race.surface as '芝' | 'ダート',
                       condition: race.condition as '良' | '稍重' | '重' | '不良' | null,
+                      closingAt: race.closingAt,
                     }}
                   />
                 </div>

@@ -1,0 +1,41 @@
+import { auth } from '@/shared/config/auth';
+import { Card, CardContent } from '@/shared/ui';
+import { ChevronLeft, Trophy } from 'lucide-react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+export default async function ResultsPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect('/login');
+  }
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      <div className="w-full max-w-4xl space-y-8">
+        <div className="flex items-center gap-4">
+          <Link href="/mypage" className="flex items-center gap-1 text-sm font-black text-gray-500 hover:text-gray-900">
+            <ChevronLeft size={16} />
+            マイページへ戻る
+          </Link>
+        </div>
+
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl font-black text-gray-900">過去の戦績確認</h1>
+          <p className="mt-2 text-gray-500">これまでの的中実績や回収率を確認できます。</p>
+        </div>
+
+        <Card className="py-20">
+          <CardContent className="flex flex-col items-center justify-center text-center">
+            <div className="mb-4 rounded-full bg-gray-100 p-6 text-gray-300">
+              <Trophy size={48} />
+            </div>
+            <p className="text-xl font-black text-gray-400">現在、戦績の集計機能は準備中です</p>
+            <p className="mt-2 text-sm text-gray-400">今後のアップデートをお楽しみに！</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

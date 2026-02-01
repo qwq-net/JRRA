@@ -17,16 +17,26 @@ export async function HorseList() {
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200">
-      <table className="w-full">
+    <div className="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table className="w-full min-w-[700px] border-collapse">
         <thead className="bg-gray-50">
-          <tr>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">馬名</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">産地</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">性別</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">年齢</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase">備考</th>
-            <th className="w-28 px-4 py-3 text-right text-xs font-semibold tracking-wider text-gray-600 uppercase">
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              馬名
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              産地
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              性別
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              年齢
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              備考
+            </th>
+            <th className="w-32 px-6 py-4 text-right text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               操作
             </th>
           </tr>
@@ -34,25 +44,30 @@ export async function HorseList() {
         <tbody className="divide-y divide-gray-200 bg-white">
           {horses.map((horse) => (
             <tr key={horse.id} className="transition-colors hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm font-medium text-gray-900">{horse.name}</td>
-              <td className="px-4 py-3 text-sm text-gray-600">
-                <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-700">
+              <td className="px-6 py-4 text-sm font-black whitespace-nowrap text-gray-900">{horse.name}</td>
+              <td className="px-6 py-4 text-sm whitespace-nowrap">
+                <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-bold text-gray-700">
                   {originLabels[horse.origin] || '不明'}
                 </span>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-600">
+              <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <span
-                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(horse.gender)}`}
+                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${getGenderBadgeClass(horse.gender)}`}
                 >
                   {getDisplayGender(horse.gender)}
                 </span>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-600">{horse.age ? `${horse.age}歳` : '-'}</td>
-              <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-500" title={horse.notes || ''}>
+              <td className="px-6 py-4 text-sm font-bold whitespace-nowrap text-gray-600">
+                {horse.age ? `${horse.age}歳` : '-'}
+              </td>
+              <td
+                className="max-w-[200px] truncate px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-500"
+                title={horse.notes || ''}
+              >
                 {horse.notes || '-'}
               </td>
-              <td className="px-4 py-3 text-right">
-                <div className="flex justify-end">
+              <td className="px-6 py-4 text-right whitespace-nowrap">
+                <div className="flex justify-end gap-2">
                   <EditHorseDialog
                     horse={{
                       ...horse,

@@ -1,5 +1,7 @@
 import { BET_TYPES, BetDetail } from '@/types/betting';
 
+export const TOKUBARAI_RATE = 0.7; // 特払い率（70円返し）
+
 export interface Finisher {
   horseNumber: number;
   bracketNumber: number;
@@ -78,12 +80,39 @@ export function isWinningBet(detail: BetDetail, finishers: Finisher[]): boolean 
 /**
  * 配当（オッズ）を計算する（パリミュチュエル方式）
  * @param totalPool その券種の総賭け金
- * @param winningAmount 総的中金額（賭け金の合計）
+ * @param winningAmount その的中馬番号（または組み合わせ）の的中金額
+ * @param totalWinningAmount その券種全体の総的中金額（複勝などの分割用）
+ * @param winningCount 的中した種類数（複勝なら通常3）
  * @param takeoutRate 控除率（0.0 〜 1.0）
- * @returns 払い戻し倍率（外れの場合は0）
+ * @returns 払い戻し倍率（10円単位で切り捨てた倍率）
  */
-export function calculatePayoutRate(totalPool: number, winningAmount: number, takeoutRate: number = 0): number {
+export function calculatePayoutRate(
+  totalPool: number,
+  winningAmount: number,
+  totalWinningAmount: number,
+  winningCount: number = 1,
+  takeoutRate: number = 0
+): number {
   if (winningAmount <= 0) return 0;
-  const poolAfterTakeout = totalPool * (1 - takeoutRate);
-  return poolAfterTakeout / winningAmount;
+
+  const netPool = totalPool * (1 - takeoutRate);
+
+  let payoutPerUnit: number;
+
+  if (winningCount > 1) {
+    // 複勝・ワイドなどの分割計算（JRA方式近似）
+    // (売上 - 総的中票) / 的中種類数 + 的中票
+    // これを1円単位で計算し、最後に100円あたりの倍率にする
+    const profit = Math.max(0, netPool - totalWinningAmount);
+    const dividedProfit = profit / winningCount;
+    payoutPerUnit = (winningAmount + dividedProfit) / winningAmount;
+  } else {
+    // 単勝などの通常計算
+    payoutPerUnit = netPool / winningAmount;
+  }
+
+  // JRA方式: 100円につき10円単位で切り捨て（例: 1.238倍 -> 1.2倍）
+  // 1.0倍を下回る場合は1.0倍保証（元返し）
+  const rate = Math.floor(payoutPerUnit * 10) / 10;
+  return Math.max(1.0, rate);
 }

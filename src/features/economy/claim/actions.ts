@@ -22,8 +22,8 @@ export async function claimEvent(eventId: string) {
     throw new Error('Event not found');
   }
 
-  if (event.status === 'COMPLETED') {
-    throw new Error('Event is already completed');
+  if (event.status !== 'ACTIVE') {
+    throw new Error('このイベントは現在開催中ではありません');
   }
 
   const existingWallet = await db.query.wallets.findFirst({

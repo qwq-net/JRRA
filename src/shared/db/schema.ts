@@ -159,6 +159,7 @@ export const races = pgTable('race', {
   surface: text('surface').notNull(),
   condition: text('condition'),
   status: raceStatusEnum('status').default('SCHEDULED').notNull(),
+  closingAt: timestamp('closingAt'),
   finalizedAt: timestamp('finalizedAt'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
@@ -211,6 +212,16 @@ export const raceEntries = pgTable('race_entry', {
     .$onUpdate(() => new Date()),
 });
 
+export const payoutResults = pgTable('payout_result', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  raceId: uuid('raceId')
+    .notNull()
+    .references(() => races.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(), // WIN, PLACE, etc.
+  combinations: jsonb('combinations').notNull(), // { numbers: number[], payout: number }[]
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
 export const walletRelations = relations(wallets, ({ one, many }) => ({
   user: one(users, {
     fields: [wallets.userId],
@@ -225,6 +236,22 @@ export const walletRelations = relations(wallets, ({ one, many }) => ({
 
 export const eventRelations = relations(events, ({ many }) => ({
   wallets: many(wallets),
+}));
+
+export const raceRelations = relations(races, ({ many }) => ({
+  entries: many(raceEntries),
+  bets: many(bets),
+}));
+
+export const raceEntryRelations = relations(raceEntries, ({ one }) => ({
+  race: one(races, {
+    fields: [raceEntries.raceId],
+    references: [races.id],
+  }),
+  horse: one(horses, {
+    fields: [raceEntries.horseId],
+    references: [horses.id],
+  }),
 }));
 
 export const transactionRelations = relations(transactions, ({ one }) => ({

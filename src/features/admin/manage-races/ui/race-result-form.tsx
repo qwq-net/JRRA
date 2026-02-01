@@ -16,11 +16,22 @@ import {
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
-import { AlertCircle, CheckCircle2, Coins, GripVertical, Info, RotateCcw, Settings2 } from 'lucide-react';
+import {
+  AlarmClock,
+  AlertCircle,
+  CheckCircle2,
+  Coins,
+  GripVertical,
+  Info,
+  RotateCcw,
+  Settings2,
+  Wrench,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { finalizeRace } from '../actions';
+import { closeRace, finalizePayout, finalizeRace } from '../actions';
 
 interface Entry {
   id: string;
@@ -32,11 +43,13 @@ interface Entry {
 interface RaceResultFormProps {
   raceId: string;
   entries: Entry[];
+  hasPayoutResults?: boolean;
   race: {
     status: string;
     surface: string;
     distance: number;
     condition: string | null;
+    closingAt: string | null;
   };
 }
 
@@ -77,7 +90,7 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
     >
       <div
         className={cn(
-          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black italic transition-colors',
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black transition-colors',
           rankStyle
         )}
       >
@@ -114,12 +127,39 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
   );
 }
 
-export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceResultFormProps) {
+export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayoutResults }: RaceResultFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [sortedEntries, setSortedEntries] = useState(initialEntries);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isPayoutMoving, setIsPayoutMoving] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!race.closingAt || race.status !== 'SCHEDULED') {
+      setTimeLeft(null);
+      return;
+    }
+
+    const updateTimer = () => {
+      const now = new Date();
+      const closing = new Date(race.closingAt!);
+      const diff = closing.getTime() - now.getTime();
+
+      if (diff <= 0) {
+        setTimeLeft('締切時刻超過');
+      } else {
+        const minutes = Math.floor(diff / 1000 / 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        setTimeLeft(`締切まで ${minutes}分${seconds}秒`);
+      }
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [race.closingAt, race.status]);
 
   // 配当設定
   const [payoutMode, setPayoutMode] = useState<'TOTAL_DISTRIBUTION' | 'MANUAL'>('TOTAL_DISTRIBUTION');
@@ -151,6 +191,35 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
     toast.message('初期状態にリセットしました');
   };
 
+  const handleManualClose = () => {
+    startTransition(async () => {
+      try {
+        await closeRace(raceId);
+        toast.success('受付を終了しました');
+        router.refresh();
+      } catch (error) {
+        console.error(error);
+        toast.error('エラーが発生しました');
+      }
+    });
+  };
+
+  const handlePayoutFinalize = async () => {
+    setIsPayoutMoving(true);
+    try {
+      await finalizePayout(raceId);
+      toast.success('払い戻し確定通知を送信しました', {
+        icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+      });
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error('エラーが発生しました');
+    } finally {
+      setIsPayoutMoving(false);
+    }
+  };
+
   const handleSubmit = () => {
     setShowConfirm(false);
     startTransition(async () => {
@@ -169,8 +238,8 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
         });
         router.refresh();
       } catch (error) {
-        toast.error('エラーが発生しました');
         console.error(error);
+        toast.error('エラーが発生しました');
       }
     });
   };
@@ -184,7 +253,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
       <div className="space-y-4 lg:col-span-2">
         <div className="flex items-end justify-between px-1">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-black text-gray-900 italic">着順を確定する</h2>
+            <h2 className="text-xl font-black text-gray-900">着順を確定する</h2>
             <div className="mb-0.5 flex items-center gap-1.5 text-xs font-semibold text-gray-400">
               <Info className="h-4 w-4" />
               ドラッグして着順を並び替えてください
@@ -201,51 +270,62 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
           )}
         </div>
 
-        <DndContext
-          id={`result-dnd-${raceId}`}
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="space-y-2">
-            <SortableContext items={sortedEntries.map((e) => e.id)} strategy={verticalListSortingStrategy}>
-              {sortedEntries.map((entry, index) => (
-                <SortableResultItem key={entry.id} entry={entry} position={index + 1} />
-              ))}
-            </SortableContext>
-          </div>
+        {race.status === 'CLOSED' ? (
+          <DndContext
+            id={`result-dnd-${raceId}`}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="space-y-2">
+              <SortableContext items={sortedEntries.map((e) => e.id)} strategy={verticalListSortingStrategy}>
+                {sortedEntries.map((entry, index) => (
+                  <SortableResultItem key={entry.id} entry={entry} position={index + 1} />
+                ))}
+              </SortableContext>
+            </div>
 
-          <DragOverlay adjustScale={false}>
-            {activeEntry && (
-              <div className="border-primary ring-primary/10 flex scale-105 items-center gap-3 rounded-xl border-2 bg-white p-2 shadow-xl ring-4">
-                <div
-                  className={cn(
-                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black italic',
-                    getRankStyles(activePosition)
-                  )}
-                >
-                  {activePosition}
-                </div>
-                <GripVertical className="text-primary h-4 w-4" />
-                <div className="flex items-center gap-2">
-                  <span
+            <DragOverlay adjustScale={false}>
+              {activeEntry && (
+                <div className="border-primary ring-primary/10 flex scale-105 items-center gap-3 rounded-xl border-2 bg-white p-2 shadow-xl ring-4">
+                  <div
                     className={cn(
-                      'flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold',
-                      getBracketColor(activeEntry.bracketNumber)
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black',
+                      getRankStyles(activePosition)
                     )}
                   >
-                    {activeEntry.bracketNumber || '?'}
-                  </span>
-                  <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold ring-1">
-                    {activeEntry.horseNumber || '?'}
-                  </span>
+                    {activePosition}
+                  </div>
+                  <GripVertical className="text-primary h-4 w-4" />
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        'flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold',
+                        getBracketColor(activeEntry.bracketNumber)
+                      )}
+                    >
+                      {activeEntry.bracketNumber || '?'}
+                    </span>
+                    <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold ring-1">
+                      {activeEntry.horseNumber || '?'}
+                    </span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{activeEntry.horseName}</span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">{activeEntry.horseName}</span>
-              </div>
-            )}
-          </DragOverlay>
-        </DndContext>
+              )}
+            </DragOverlay>
+          </DndContext>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 text-center text-gray-400">
+            <Settings2 className="mb-4 h-12 w-12 opacity-20" />
+            <p className="text-sm font-bold">
+              受付が終了すると着順の操作が可能になります。
+              <br />
+              締切時刻を待つか、「手動締切」を行ってください。
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 右カラム: 設定・アクション */}
@@ -258,7 +338,41 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
             </div>
             <div className="flex items-center justify-between border-b border-gray-50 pb-2">
               <span className="font-medium text-gray-500">ステータス</span>
-              <Badge variant="status" label={race.status} />
+              <div className="flex flex-col items-end gap-1">
+                <Badge variant="status" label={race.status} />
+              </div>
+            </div>
+            <div className="border-b border-gray-50 pb-2">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-gray-500">受付終了予定</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-gray-900">
+                    {race.closingAt
+                      ? new Date(race.closingAt).toLocaleString('ja-JP', {
+                          month: 'numeric',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : '手動'}
+                  </span>
+                  <Link
+                    href={`/admin/races`}
+                    className="text-gray-400 transition-colors hover:text-blue-500"
+                    title="締切設定を変更"
+                  >
+                    <Wrench className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
+              {timeLeft && (
+                <div className="mt-1 flex justify-end">
+                  <span className="flex animate-pulse items-center gap-1.5 text-[10px] font-black text-red-600">
+                    <AlarmClock className="h-3 w-3" />
+                    {timeLeft}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between border-b border-gray-50 pb-2">
               <span className="font-medium text-gray-500">コース</span>
@@ -314,77 +428,102 @@ export function RaceResultForm({ raceId, entries: initialEntries, race }: RaceRe
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
                 <p className="text-[10px] leading-relaxed text-blue-600/80">
                   {payoutMode === 'TOTAL_DISTRIBUTION'
-                    ? '全ての賭け金を的中者で山分けします。もっともシンプルで身内遊びに適した設定です。'
+                    ? '全ての賭け金を的中者で山分けします。'
                     : '設定した控除率を差し引いた金額を的中者で分配します。'}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-8">
-            <AlertDialog.Root open={showConfirm} onOpenChange={setShowConfirm}>
-              <AlertDialog.Trigger asChild>
-                <Button
-                  className={cn(
-                    'shadow-primary/20 relative w-full py-6 text-lg font-black shadow-lg transition-all duration-300 active:scale-[0.98]',
-                    isChanged ? 'from-primary to-primary/80 bg-linear-to-br' : 'grayscale-50'
-                  )}
-                  disabled={isPending}
-                >
-                  {isPending ? '確定処理中...' : '着順を確定する'}
-                  {isChanged && !isPending && (
-                    <span className="absolute -top-1 -right-1 h-3 w-3 animate-ping rounded-full bg-white/40" />
-                  )}
-                </Button>
-              </AlertDialog.Trigger>
-              <AlertDialog.Portal>
-                <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300" />
-                <AlertDialog.Content className="animate-in zoom-in-95 fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl transition-all duration-300">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                      <AlertCircle className="h-8 w-8" />
-                    </div>
-                    <AlertDialog.Title className="mb-2 text-xl font-bold text-gray-900 italic">
-                      着順を確定しますか？
-                    </AlertDialog.Title>
-                    <AlertDialog.Description className="text-sm text-gray-500">
-                      この操作を行うと、投票された馬券の払い戻し計算が
-                      <span className="mx-1 font-bold text-gray-900 underline">
-                        {payoutMode === 'TOTAL_DISTRIBUTION' ? '全額配分' : `控除率 ${takeoutRate}%`}
-                      </span>
-                      で実行されます。
-                      <br />
-                      <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4 font-bold text-gray-900">
-                        <div className="flex justify-between border-b border-gray-100 pb-1 italic">
-                          <span className="text-amber-600">1着</span>
-                          <span>{sortedEntries[0]?.horseName}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-100 py-1 italic">
-                          <span className="text-slate-500">2着</span>
-                          <span>{sortedEntries[1]?.horseName}</span>
-                        </div>
-                        <div className="flex justify-between pt-1 italic">
-                          <span className="text-orange-600">3着</span>
-                          <span>{sortedEntries[2]?.horseName}</span>
-                        </div>
+          <div className="mt-8 space-y-3">
+            {race.status === 'SCHEDULED' && (
+              <Button
+                variant="outline"
+                className="w-full py-6 text-sm font-bold text-red-500 hover:bg-red-50 hover:text-red-600"
+                onClick={handleManualClose}
+                disabled={isPending}
+              >
+                手動で受付を終了する
+              </Button>
+            )}
+
+            {race.status === 'CLOSED' && (
+              <AlertDialog.Root open={showConfirm} onOpenChange={setShowConfirm}>
+                <AlertDialog.Trigger asChild>
+                  <Button
+                    className={cn(
+                      'shadow-primary/20 relative w-full py-6 text-lg font-black shadow-lg transition-all duration-300 active:scale-[0.98]',
+                      isChanged ? 'from-primary to-primary/80 bg-linear-to-br' : 'grayscale-50'
+                    )}
+                    disabled={isPending || isPayoutMoving}
+                  >
+                    {isPending ? '確定処理中...' : '着順を確定する'}
+                    {isChanged && !isPending && (
+                      <span className="absolute -top-1 -right-1 h-3 w-3 animate-ping rounded-full bg-white/40" />
+                    )}
+                  </Button>
+                </AlertDialog.Trigger>
+                <AlertDialog.Portal>
+                  <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300" />
+                  <AlertDialog.Content className="animate-in zoom-in-95 fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl transition-all duration-300">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                        <AlertCircle className="h-8 w-8" />
                       </div>
-                    </AlertDialog.Description>
-                  </div>
-                  <div className="mt-8 flex flex-col gap-3">
-                    <AlertDialog.Action asChild>
-                      <Button onClick={handleSubmit} className="w-full py-5 text-lg font-bold">
-                        確定する
-                      </Button>
-                    </AlertDialog.Action>
-                    <AlertDialog.Cancel asChild>
-                      <Button variant="outline" className="w-full py-5 text-lg font-bold">
-                        キャンセル
-                      </Button>
-                    </AlertDialog.Cancel>
-                  </div>
-                </AlertDialog.Content>
-              </AlertDialog.Portal>
-            </AlertDialog.Root>
+                      <AlertDialog.Title className="mb-2 text-xl font-bold text-gray-900">
+                        着順を確定しますか？
+                      </AlertDialog.Title>
+                      <AlertDialog.Description asChild className="text-sm text-gray-500">
+                        <div>
+                          この操作を行うと、投票された馬券の払い戻し計算が
+                          <span className="mx-1 font-bold text-gray-900 underline">
+                            {payoutMode === 'TOTAL_DISTRIBUTION' ? '全額配分' : `控除率 ${takeoutRate}%`}
+                          </span>
+                          で実行されます。
+                          <br />
+                          <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4 font-bold text-gray-900">
+                            <div className="flex justify-between border-b border-gray-100 pb-1">
+                              <span className="text-amber-600">1着</span>
+                              <span>{sortedEntries[0]?.horseName}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-100 py-1">
+                              <span className="text-slate-500">2着</span>
+                              <span>{sortedEntries[1]?.horseName}</span>
+                            </div>
+                            <div className="flex justify-between pt-1">
+                              <span className="text-orange-600">3着</span>
+                              <span>{sortedEntries[2]?.horseName}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </AlertDialog.Description>
+                    </div>
+                    <div className="mt-8 flex flex-col gap-3">
+                      <AlertDialog.Action asChild>
+                        <Button onClick={handleSubmit} className="w-full py-5 text-lg font-bold">
+                          確定する
+                        </Button>
+                      </AlertDialog.Action>
+                      <AlertDialog.Cancel asChild>
+                        <Button variant="outline" className="w-full py-5 text-lg font-bold">
+                          キャンセル
+                        </Button>
+                      </AlertDialog.Cancel>
+                    </div>
+                  </AlertDialog.Content>
+                </AlertDialog.Portal>
+              </AlertDialog.Root>
+            )}
+
+            {hasPayoutResults && (
+              <Button
+                className="relative w-full border-2 border-amber-500 bg-white py-6 text-lg font-black text-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-50"
+                onClick={handlePayoutFinalize}
+                disabled={isPayoutMoving || isPending}
+              >
+                {isPayoutMoving ? '払い戻し処理中...' : '払い戻しを確定する'}
+              </Button>
+            )}
           </div>
         </div>
       </div>

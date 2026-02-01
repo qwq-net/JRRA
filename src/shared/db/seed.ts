@@ -9,9 +9,9 @@ async function main() {
   const [event] = await db
     .insert(schema.events)
     .values({
-      name: '第92回日本ダービー開催',
-      description: '東京競馬場にて開催される、3歳馬の最高峰のレース。',
-      distributeAmount: 10000,
+      name: '第334回 拠り所杯',
+      description: '第334回 拠り所杯 馬刺しになるのは誰だ！',
+      distributeAmount: 100000,
       date: '2025-05-25',
       status: 'SCHEDULED',
     })
@@ -30,6 +30,7 @@ async function main() {
       surface: '芝',
       condition: '良',
       status: 'SCHEDULED',
+      closingAt: null,
     })
     .returning();
 

@@ -14,6 +14,7 @@ interface EditRaceDialogProps {
     distance: number;
     surface: '芝' | 'ダート';
     condition: '良' | '稍重' | '重' | '不良' | null;
+    closingAt: Date | string | null;
   };
 }
 

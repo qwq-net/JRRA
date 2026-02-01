@@ -6,9 +6,9 @@ import { getBetTypeColumnCount, getBetTypeColumnLabels } from '@/features/bettin
 import { getBracketColor } from '@/shared/utils/bracket';
 import { getGenderAge, getGenderBadgeClass } from '@/shared/utils/gender';
 import { BET_TYPE_LABELS, BET_TYPES, BetType } from '@/types/betting';
-import { Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 interface Entry {
@@ -25,6 +25,8 @@ interface BetTableProps {
   walletId: string;
   balance: number;
   entries: Entry[];
+  initialStatus: string;
+  closingAt: string | null;
 }
 
 const BET_TYPE_ORDER: BetType[] = [
@@ -38,12 +40,56 @@ const BET_TYPE_ORDER: BetType[] = [
   BET_TYPES.TRIO,
 ];
 
-export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) {
+export function BetTable({ raceId, walletId, balance, entries, initialStatus, closingAt }: BetTableProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [betType, setBetType] = useState<BetType>(BET_TYPES.WIN);
   const [selections, setSelections] = useState<Set<number>[]>([new Set(), new Set(), new Set()]);
   const [amount, setAmount] = useState<number>(100);
+  const [isClosed, setIsClosed] = useState(initialStatus !== 'SCHEDULED');
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!closingAt || isClosed) return;
+
+    const updateTimer = () => {
+      const now = new Date();
+      const closing = new Date(closingAt);
+      const diff = closing.getTime() - now.getTime();
+
+      if (diff <= 0) {
+        setIsClosed(true);
+        setTimeLeft('受付終了');
+      } else {
+        const minutes = Math.floor(diff / 1000 / 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        setTimeLeft(`締切まで ${minutes}分${seconds}秒`);
+      }
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [closingAt, isClosed]);
+
+  useEffect(() => {
+    const eventSource = new EventSource('/api/events/race-status');
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (
+          (data.type === 'RACE_CLOSED' || data.type === 'RACE_FINALIZED' || data.type === 'RACE_BROADCAST') &&
+          data.raceId === raceId
+        ) {
+          setIsClosed(true);
+          toast.info('このレースの受付は終了しました');
+        }
+      } catch {
+        // ignore heartbeat
+      }
+    };
+    return () => eventSource.close();
+  }, [raceId]);
 
   const columnCount = getBetTypeColumnCount(betType);
   const columnLabels = getBetTypeColumnLabels(betType);
@@ -135,6 +181,13 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
 
   return (
     <div className="space-y-6">
+      {isClosed && (
+        <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm font-bold text-red-600 ring-1 ring-red-100">
+          <AlertCircle className="h-4 w-4" />
+          このレースは受付を終了しました。現在、馬券を購入することはできません。
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-2 rounded-lg bg-gray-100 p-2">
         {BET_TYPE_ORDER.map((type) => (
           <button
@@ -148,6 +201,15 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
             {BET_TYPE_LABELS[type]}
           </button>
         ))}
+        {timeLeft && (
+          <div className="ml-auto flex items-center gap-2 px-3 text-sm font-black text-red-600">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
+            </span>
+            {timeLeft}
+          </div>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -198,7 +260,8 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
                               type="checkbox"
                               checked={selections[colIdx].has(Number(bracket))}
                               onChange={() => handleCheckboxChange(colIdx, Number(bracket))}
-                              className="text-primary focus:ring-primary h-5 w-5 cursor-pointer rounded border-gray-300"
+                              disabled={isClosed || isPending}
+                              className="text-primary focus:ring-primary h-5 w-5 cursor-pointer rounded border-gray-300 disabled:cursor-not-allowed disabled:opacity-30"
                             />
                           </td>
                         ))}
@@ -232,7 +295,8 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
                           type="checkbox"
                           checked={selections[colIdx].has(entry.horseNumber!)}
                           onChange={() => handleCheckboxChange(colIdx, entry.horseNumber!)}
-                          className="text-primary focus:ring-primary h-5 w-5 cursor-pointer rounded border-gray-300"
+                          disabled={isClosed || isPending}
+                          className="text-primary focus:ring-primary h-5 w-5 cursor-pointer rounded border-gray-300 disabled:cursor-not-allowed disabled:opacity-30"
                         />
                       </td>
                     ))}
@@ -256,7 +320,8 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
               step={100}
               value={amount}
               onChange={(e) => setAmount(parseInt(e.target.value, 10) || 100)}
-              className="w-24 rounded-md border border-gray-300 px-3 py-2 text-right text-sm"
+              disabled={isClosed || isPending}
+              className="w-24 rounded-md border border-gray-300 px-3 py-2 text-right text-sm disabled:bg-gray-100"
             />
             <span className="text-sm text-gray-500">円</span>
           </div>
@@ -270,7 +335,7 @@ export function BetTable({ raceId, walletId, balance, entries }: BetTableProps) 
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={isPending || betCount === 0 || totalAmount > balance}
+            disabled={isClosed || isPending || betCount === 0 || totalAmount > balance}
             className="from-primary to-primary/80 hover:to-primary rounded-lg bg-linear-to-r px-8 py-3 font-bold text-white shadow-md transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? (

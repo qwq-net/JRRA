@@ -73,7 +73,7 @@ export function HorseForm({ initialData, onSuccess }: HorseFormProps) {
                   onChange={(e) => setGender(e.target.value as '牡' | '牝' | 'セン')}
                   className="sr-only"
                 />
-                {g}
+                {g === 'セン' ? 'セ' : g}
               </label>
             ))}
           </div>

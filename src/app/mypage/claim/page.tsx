@@ -22,7 +22,11 @@ export default async function ClaimPage() {
 
   const userWallets = await getEventWallets(session.user.id);
   const joinedEventIds = new Set(userWallets.map((w) => w.eventId));
-  const joinableEvents = availableEvents.filter((e) => !joinedEventIds.has(e.id));
+
+  const eventsWithJoinStatus = availableEvents.map((event) => ({
+    ...event,
+    isJoined: joinedEventIds.has(event.id),
+  }));
 
   return (
     <div className="flex flex-col items-center p-4">
@@ -38,12 +42,12 @@ export default async function ClaimPage() {
         </div>
 
         <div>
-          <h1 className="text-3xl font-black text-gray-900">おこずかいを貰う</h1>
-          <p className="text-gray-500">開催中のイベントに参加して、軍資金を受け取りましょう。</p>
+          <h1 className="text-3xl font-black text-gray-900">お小遣いを貰う</h1>
+          <p className="font-bold text-gray-500">開催中のイベントに参加して、軍資金を受け取りましょう。</p>
         </div>
 
         <section>
-          <EventClaimList events={joinableEvents} />
+          <EventClaimList events={eventsWithJoinStatus} />
         </section>
       </div>
     </div>

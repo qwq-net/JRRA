@@ -11,6 +11,7 @@ type AvailableEvent = {
   distributeAmount: number;
   date: string;
   status: 'SCHEDULED' | 'ACTIVE' | 'COMPLETED';
+  isJoined?: boolean;
 };
 
 export function EventClaimList({ events }: { events: AvailableEvent[] }) {
@@ -34,11 +35,15 @@ export function EventClaimList({ events }: { events: AvailableEvent[] }) {
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-bold">{event.name}</h3>
               <span
-                className={`rounded px-2 py-1 text-xs font-bold ${
-                  event.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-black ${
+                  event.isJoined
+                    ? 'bg-blue-100 text-blue-700'
+                    : event.status === 'ACTIVE'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-amber-100 text-amber-700'
                 }`}
               >
-                {event.status === 'ACTIVE' ? '開催中' : '予定'}
+                {event.isJoined ? '参加済み' : event.status === 'ACTIVE' ? '公開中' : '準備中'}
               </span>
             </div>
             <p className="mt-1 text-sm text-gray-600">開催日: {event.date}</p>
@@ -49,11 +54,11 @@ export function EventClaimList({ events }: { events: AvailableEvent[] }) {
               <span className="text-primary font-bold">配布: {event.distributeAmount.toLocaleString()} 円</span>
               <Button
                 onClick={() => handleClaim(event.id)}
-                disabled={isPending}
+                disabled={isPending || event.status !== 'ACTIVE' || event.isJoined}
                 size="sm"
-                variant={event.status === 'ACTIVE' ? 'primary' : 'secondary'}
+                variant={event.isJoined ? 'outline' : event.status === 'ACTIVE' ? 'primary' : 'secondary'}
               >
-                参加する
+                {event.isJoined ? '参加済み' : event.status === 'ACTIVE' ? '参加する' : '開始前'}
               </Button>
             </div>
           </CardContent>

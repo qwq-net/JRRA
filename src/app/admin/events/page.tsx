@@ -1,6 +1,4 @@
-import { EventForm, EventList } from '@/features/admin/manage-events';
-import { Card } from '@/shared/ui';
-
+import { CreateEventDialog, EventList } from '@/features/admin/manage-events';
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
 import { events } from '@/shared/db/schema';
@@ -18,25 +16,19 @@ export default async function AdminEventsPage() {
   });
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-secondary text-3xl font-bold">Event Management</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-black text-gray-900">イベント管理</h1>
+        <p className="mt-1 text-sm font-medium text-gray-500">イベントの作成・ステータス管理を行います</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <Card className="border-none bg-transparent p-0 shadow-none hover:shadow-none lg:col-span-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-secondary mb-4 text-xl font-bold">All Events</h2>
-            <EventList events={allEvents} />
-          </div>
-        </Card>
+      <div className="space-y-4">
+        <div className="flex items-end justify-between px-2">
+          <h2 className="text-xl font-black text-gray-900">すべてのイベント</h2>
+          <CreateEventDialog />
+        </div>
 
-        <Card className="h-fit">
-          <div className="p-6">
-            <h2 className="text-secondary mb-4 text-xl font-bold">Create New Event</h2>
-            <EventForm />
-          </div>
-        </Card>
+        <EventList events={allEvents} />
       </div>
     </div>
   );

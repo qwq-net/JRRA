@@ -1,9 +1,8 @@
 import { UserProfile } from '@/entities/user';
 import { LogoutButton } from '@/features/auth';
-import { WalletOverview, getEventWallets } from '@/features/economy/wallet';
 import { auth } from '@/shared/config/auth';
 import { Button, Card, CardContent } from '@/shared/ui';
-import { Coins, Zap } from 'lucide-react';
+import { Coins, History, Wallet, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -14,19 +13,48 @@ export default async function MyPage() {
     redirect('/login');
   }
 
-  const userWallets = await getEventWallets(session.user.id);
+  const navItems = [
+    {
+      href: '/mypage/sokupat',
+      title: '即PAT',
+      description: '開催中のレースへ投票（馬券購入）',
+      icon: <Zap size={32} />,
+      color: 'bg-yellow-100 text-yellow-600',
+    },
+    {
+      href: '/mypage/results',
+      title: '過去の戦績確認',
+      description: 'これまでの的中実績や回収率',
+      icon: <History size={32} />,
+      color: 'bg-blue-100 text-blue-600',
+    },
+    {
+      href: '/mypage/wallet',
+      title: 'ウォレット確認',
+      description: '所持金と取引履歴の確認',
+      icon: <Wallet size={32} />,
+      color: 'bg-green-100 text-green-600',
+    },
+    {
+      href: '/mypage/claim',
+      title: 'お小遣いを貰う',
+      description: 'イベントに参加して資金をチャージ',
+      icon: <Coins size={32} />,
+      color: 'bg-amber-100 text-amber-600',
+    },
+  ];
 
   return (
     <div className="flex flex-col items-center p-4">
       <div className="w-full max-w-4xl space-y-8">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <Card className="border-none bg-white shadow-sm ring-1 ring-gray-100">
+          <CardContent className="flex flex-col items-center justify-between gap-4 p-6 md:flex-row">
             <UserProfile user={session.user} />
             <div className="flex items-center gap-4">
               {session.user.role === 'ADMIN' && (
                 <Link href="/admin">
-                  <Button variant="outline" size="sm">
-                    Admin Panel
+                  <Button variant="outline" size="sm" className="font-black">
+                    管理者パネル
                   </Button>
                 </Link>
               )}
@@ -35,38 +63,23 @@ export default async function MyPage() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Link href="/mypage/claim">
-            <Card className="hover:border-primary group h-full transition-all hover:shadow-xl">
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 transition-transform group-hover:scale-110">
-                  <Coins size={32} />
-                </div>
-                <h3 className="text-xl leading-tight font-bold text-gray-900">おこずかいを貰う</h3>
-                <p className="mt-2 text-xs text-gray-500">イベントに参加して資金をチャージ</p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link href="/mypage/sokupat">
-            <Card className="hover:border-primary group h-full transition-all hover:shadow-xl">
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-100 text-yellow-600 transition-transform group-hover:scale-110">
-                  <Zap size={32} />
-                </div>
-                <h3 className="text-xl leading-tight font-bold text-gray-900">即PAT</h3>
-                <p className="mt-2 text-xs text-gray-500">開催中のレースへ投票（馬券購入）</p>
-              </CardContent>
-            </Card>
-          </Link>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} className="group h-full">
+              <Card className="h-full border-none transition-all duration-300 hover:shadow-xl hover:ring-2 hover:ring-gray-200 active:scale-[0.98]">
+                <CardContent className="flex flex-col items-center justify-center p-10 text-center">
+                  <div
+                    className={`mb-6 flex h-20 w-20 items-center justify-center rounded-4xl transition-all duration-500 group-hover:scale-110 group-hover:rounded-2xl ${item.color}`}
+                  >
+                    {item.icon}
+                  </div>
+                  <h3 className="text-2xl leading-tight font-black text-gray-900">{item.title}</h3>
+                  <p className="mt-3 text-sm font-bold text-gray-400">{item.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
-
-        <section>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-secondary text-xl font-bold">参加済みイベント / ウォレット</h2>
-          </div>
-          <WalletOverview wallets={userWallets} />
-        </section>
       </div>
     </div>
   );

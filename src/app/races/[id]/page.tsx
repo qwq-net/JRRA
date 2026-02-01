@@ -3,7 +3,7 @@ import { BetTable } from '@/features/betting/ui/bet-table';
 import { getEventWallets } from '@/features/economy/wallet';
 import { auth } from '@/shared/config/auth';
 import { Button, Card, CardContent } from '@/shared/ui';
-import { ChevronLeft, Info } from 'lucide-react';
+import { AlarmClock, ChevronLeft, Info } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
@@ -57,16 +57,38 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
       </Link>
 
       <div className="mb-8 space-y-2">
-        <div className="flex items-center gap-3">
-          <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700">
-            {race.location} {race.distance}m ({race.surface})
-          </span>
-          <span className="text-sm font-medium text-gray-400">{race.date}</span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex items-center gap-3">
+            <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700">
+              {race.location} {race.distance}m ({race.surface})
+            </span>
+            <span className="text-sm font-medium text-gray-400">{race.date}</span>
+          </div>
+          {race.closingAt && (
+            <div className="flex items-center gap-1.5 text-sm font-bold text-red-600">
+              <AlarmClock className="h-4 w-4" />
+              <span>締切: {race.closingAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          )}
         </div>
-        <h1 className="text-3xl font-black text-gray-900">{race.name}</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-black text-gray-900">{race.name}</h1>
+          <Link href={`/races/${id}/standby`}>
+            <Button variant="outline" className="font-bold">
+              購入馬券確認・結果待機
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <BetTable raceId={race.id} walletId={wallet.id} balance={wallet.balance} entries={entries} />
+      <BetTable
+        raceId={race.id}
+        walletId={wallet.id}
+        balance={wallet.balance}
+        entries={entries}
+        initialStatus={race.status}
+        closingAt={race.closingAt ? race.closingAt.toISOString() : null}
+      />
     </div>
   );
 }
