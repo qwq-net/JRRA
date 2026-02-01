@@ -23,7 +23,6 @@ export async function placeBet({
     throw new Error('Unauthorized');
   }
 
-  // レースの締切・ステータス確認
   const race = await db.query.races.findFirst({
     where: eq(races.id, raceId),
   });
@@ -44,7 +43,6 @@ export async function placeBet({
     throw new Error('Invalid amount');
   }
 
-  // ウォレットの存在と残高確認
   const wallet = await db.query.wallets.findFirst({
     where: eq(wallets.id, walletId),
   });
@@ -62,7 +60,6 @@ export async function placeBet({
   }
 
   await db.transaction(async (tx) => {
-    // 1. 馬券データを保存
     const [newBet] = await tx
       .insert(bets)
       .values({
@@ -75,15 +72,13 @@ export async function placeBet({
       })
       .returning();
 
-    // 2. 取引履歴を記録
     await tx.insert(transactions).values({
       walletId,
       type: 'BET',
-      amount: -amount, // 出金なのでマイナス
+      amount: -amount,
       referenceId: newBet.id,
     });
 
-    // 3. ウォレット残高を更新
     await tx
       .update(wallets)
       .set({

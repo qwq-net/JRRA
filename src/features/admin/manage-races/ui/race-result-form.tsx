@@ -161,7 +161,6 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
     return () => clearInterval(timer);
   }, [race.closingAt, race.status]);
 
-  // 配当設定
   const [payoutMode, setPayoutMode] = useState<'TOTAL_DISTRIBUTION' | 'MANUAL'>('TOTAL_DISTRIBUTION');
   const [takeoutRate, setTakeoutRate] = useState<number>(25);
 
@@ -231,7 +230,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
       try {
         await finalizeRace(raceId, results, {
           payoutMode,
-          takeoutRate: takeoutRate / 100, // パーセントを小数に
+          takeoutRate: takeoutRate / 100,
         });
         toast.success('着順を確定しました（払い戻し計算完了）', {
           icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,

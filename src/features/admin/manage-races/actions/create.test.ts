@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createRace } from './create';
 
-// Mocks
 vi.mock('@/shared/config/auth', () => ({
   auth: vi.fn(),
   signIn: vi.fn(),
@@ -27,7 +26,6 @@ describe('createRace', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup DB chain mock
     mockInsert.mockReturnValue({ values: mockValues });
     (db.insert as unknown as Mock).mockImplementation(mockInsert);
   });

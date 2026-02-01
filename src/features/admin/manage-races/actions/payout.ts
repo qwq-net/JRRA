@@ -19,7 +19,6 @@ export async function finalizePayout(raceId: string) {
   }
 
   await db.transaction(async (tx) => {
-    // 払い戻し対象の馬券を取得
     const allBets = await tx.query.bets.findMany({
       where: eq(bets.raceId, raceId),
     });
@@ -48,7 +47,6 @@ export async function finalizePayout(raceId: string) {
       }
     }
 
-    // レースステータスを FINALIZED に変更
     await tx
       .update(races)
       .set({
@@ -58,7 +56,6 @@ export async function finalizePayout(raceId: string) {
       .where(eq(races.id, raceId));
   });
 
-  // SSEイベントの発行（放送イベントとして扱う）
   const { raceEventEmitter, RACE_EVENTS } = await import('@/lib/sse/event-emitter');
   raceEventEmitter.emit(RACE_EVENTS.RACE_BROADCAST, { raceId, timestamp: Date.now() });
 

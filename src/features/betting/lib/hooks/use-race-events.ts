@@ -6,7 +6,7 @@ type ConnectionStatus = 'CONNECTING' | 'CONNECTED' | 'DISCONNECTED';
 
 interface UseRaceEventsProps {
   raceId: string;
-  isFinalized: boolean; // 最初から確定しているかどうか
+  isFinalized: boolean;
   onRaceBroadcast?: () => void;
 }
 
@@ -47,7 +47,7 @@ export function useRaceEvents({ raceId, isFinalized, onRaceBroadcast }: UseRaceE
             toast.success('レース結果が発表されました！');
             onRaceBroadcast?.();
             setConnectionStatus('DISCONNECTED');
-            router.refresh(); // Server Componentsの再レンダリングをトリガー
+            router.refresh();
           }
         } catch (e) {
           console.error('[SSE] Parse Error', e);

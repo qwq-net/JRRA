@@ -152,10 +152,9 @@ export function EntryDnd({ raceId, availableHorses: initialAvailable, existingEn
     const activeIdStr = active.id as string;
     const overIdStr = over.id as string;
 
-    // 左から右への移動
     if (activeIdStr.startsWith('available-')) {
       const horseId = activeIdStr.replace('available-', '');
-      // 出走馬一覧側、または出走馬アイテムの上にドロップされた場合
+
       if (overIdStr === 'entries-list' || entries.some((e) => e.id === overIdStr)) {
         const horse = available.find((h) => h.id === horseId);
         if (horse) {
@@ -165,15 +164,12 @@ export function EntryDnd({ raceId, availableHorses: initialAvailable, existingEn
       return;
     }
 
-    // 右側のアイテムを操作している場合
     if (entries.some((e) => e.id === activeIdStr)) {
-      // 左側のリスト、または左側のアイテムの上にドロップされた場合（戻す操作）
       if (overIdStr === 'available-list' || available.some((h) => `available-${h.id}` === overIdStr)) {
         removeFromEntries(activeIdStr);
         return;
       }
 
-      // 右側リスト内での並び替え
       const oldIndex = entries.findIndex((e) => e.id === activeIdStr);
       const newIndex = entries.findIndex((e) => e.id === overIdStr);
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {

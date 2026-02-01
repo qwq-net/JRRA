@@ -53,7 +53,6 @@ export async function closeRace(raceId: string) {
 
   await db.update(races).set({ status: 'CLOSED' }).where(eq(races.id, raceId));
 
-  // SSEイベントの発行（サーバーサイド）
   const { raceEventEmitter, RACE_EVENTS } = await import('@/lib/sse/event-emitter');
   raceEventEmitter.emit(RACE_EVENTS.RACE_CLOSED, { raceId, timestamp: Date.now() });
 

@@ -1,9 +1,6 @@
 import { cn } from '@/shared/utils/cn';
 
-type BadgeVariant =
-  | 'surface' // 芝・ダート
-  | 'condition' // 良・稍重・重・不良
-  | 'status'; // SCHEDULED, CLOSED, etc.
+type BadgeVariant = 'surface' | 'condition' | 'status';
 
 interface BadgeProps {
   label: string | null;

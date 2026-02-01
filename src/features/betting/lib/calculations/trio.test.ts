@@ -19,7 +19,7 @@ describe('三連複（TRIO）', () => {
       [1, 2],
       [3, 4],
     ];
-    // {1,2,3}, {1,2,4} are valid unique combinations
+
     const count = calculateBetCount(selections, BET_TYPES.TRIO);
     expect(count).toBe(2);
   });
@@ -30,7 +30,7 @@ describe('三連複（TRIO）', () => {
       [1, 2, 3],
       [1, 2, 3],
     ];
-    // Only {1,2,3} is valid. All others duplicate or invalid (same horse)
+
     const count = calculateBetCount(selections, BET_TYPES.TRIO);
     expect(count).toBe(1);
   });

@@ -7,15 +7,15 @@ import { X } from 'lucide-react';
 interface ResultItem {
   type: BetType;
   combinations: {
-    numbers: number[]; // [1, 2] etc.
+    numbers: number[];
     payout: number;
-    popularity?: number; // 人気順（あれば）
+    popularity?: number;
   }[];
 }
 
 interface PayoutResultModalProps {
   raceName: string;
-  raceDate: string; // "東京 11R" etc.
+  raceDate: string;
   results: ResultItem[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,12 +44,6 @@ const TYPE_LABELS: Record<BetType, string> = {
 };
 
 export function PayoutResultModal({ raceName, raceDate, results, open, onOpenChange }: PayoutResultModalProps) {
-  // グリッドレイアウト用にデータを整形
-  // 左カラム: 単勝, 複勝, 馬連, 馬単, 3連複, 3連単
-  // 右カラム: 枠連, ワイド (画像レイアウトを参考に配置)
-
-  // 簡易的に全リストを表示するスタイルにする（レスポンシブ考慮）
-
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -103,11 +97,8 @@ export function PayoutResultModal({ raceName, raceDate, results, open, onOpenCha
 
 function renderResultBlock(results: ResultItem[], type: BetType) {
   const item = results.find((r) => r.type === type);
-  // データがなくても枠は表示する（空表示）
-  const combinations = item?.combinations || [];
 
-  // 複勝やワイドなどで複数行ある場合に対応
-  // レイアウト: [ラベル(色付き)] [番号] [払戻金]
+  const combinations = item?.combinations || [];
 
   return (
     <div className="flex min-h-12 bg-black text-white">

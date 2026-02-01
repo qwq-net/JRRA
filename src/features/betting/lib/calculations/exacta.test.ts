@@ -18,7 +18,7 @@ describe('馬単（EXACTA）', () => {
       [1, 2],
     ];
     const count = calculateBetCount(selections, BET_TYPES.EXACTA);
-    expect(count).toBe(2); // 1-2, 2-1 (1-1, 2-2 removed)
+    expect(count).toBe(2);
   });
 
   it('同一馬除外: {1} * {1} = 0点', () => {
@@ -45,7 +45,7 @@ describe('馬単（EXACTA）', () => {
       [2, 2],
     ];
     const count = calculateBetCount(selections, BET_TYPES.EXACTA);
-    expect(count).toBe(1); // 1-2
+    expect(count).toBe(1);
   });
 
   it('入力重複あり: {1,2,1} * {1,2,2} = 2点', () => {
@@ -53,7 +53,7 @@ describe('馬単（EXACTA）', () => {
       [1, 2, 1],
       [1, 2, 2],
     ];
-    // Unique: {1,2} * {1,2} -> 1-2, 2-1
+
     const count = calculateBetCount(selections, BET_TYPES.EXACTA);
     expect(count).toBe(2);
   });

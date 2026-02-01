@@ -20,7 +20,7 @@ describe('三連単（TRIFECTA）', () => {
       [3, 4, 5],
     ];
     const count = calculateBetCount(selections, BET_TYPES.TRIFECTA);
-    expect(count).toBe(14); // Verified
+    expect(count).toBe(14);
   });
 
   it('同一馬除外: {1,2} * {1,2} * {3,4} = 4点', () => {
@@ -29,7 +29,7 @@ describe('三連単（TRIFECTA）', () => {
       [1, 2],
       [3, 4],
     ];
-    // 1-2-3, 1-2-4, 2-1-3, 2-1-4
+
     const count = calculateBetCount(selections, BET_TYPES.TRIFECTA);
     expect(count).toBe(4);
   });
@@ -40,7 +40,7 @@ describe('三連単（TRIFECTA）', () => {
       [1, 2, 3],
       [1, 2, 3],
     ];
-    // Permutations of 3 items = 6
+
     const count = calculateBetCount(selections, BET_TYPES.TRIFECTA);
     expect(count).toBe(6);
   });
@@ -52,7 +52,7 @@ describe('三連単（TRIFECTA）', () => {
       [3, 3],
     ];
     const count = calculateBetCount(selections, BET_TYPES.TRIFECTA);
-    expect(count).toBe(1); // 1-2-3
+    expect(count).toBe(1);
   });
 
   it('組み合わせの詳細確認: {1,2} * {3,4} * {5,6} (ソートなし)', () => {
@@ -63,7 +63,6 @@ describe('三連単（TRIFECTA）', () => {
     ];
     const combinations = getValidBetCombinations(selections, BET_TYPES.TRIFECTA);
 
-    // Expect exact sequences
     expect(combinations).toContainEqual([1, 3, 5]);
     expect(combinations).toContainEqual([1, 3, 6]);
     expect(combinations).toContainEqual([1, 4, 5]);

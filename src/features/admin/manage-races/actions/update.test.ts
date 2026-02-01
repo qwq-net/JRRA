@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { closeRace, updateRace } from './update';
 
-// Mocks
 vi.mock('@/shared/config/auth', () => ({
   auth: vi.fn(),
   signIn: vi.fn(),
@@ -36,7 +35,6 @@ describe('updateRace', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup DB chain mock
     mockUpdate.mockReturnValue({ set: mockSet });
     mockSet.mockReturnValue({ where: mockWhere });
     (db.update as unknown as Mock).mockImplementation(mockUpdate);
@@ -100,7 +98,6 @@ describe('closeRace', () => {
     expect(mockSet).toHaveBeenCalledWith({ status: 'CLOSED' });
     expect(mockWhere).toHaveBeenCalled();
 
-    // SSE event check
     const { raceEventEmitter } = await import('@/lib/sse/event-emitter');
     expect(raceEventEmitter.emit).toHaveBeenCalledWith('RACE_CLOSED', expect.objectContaining({ raceId: '123' }));
 

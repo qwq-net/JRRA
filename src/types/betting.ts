@@ -1,12 +1,12 @@
 export const BET_TYPES = {
-  WIN: 'win', // 単勝
-  PLACE: 'place', // 複勝
-  BRACKET_QUINELLA: 'bracket_quinella', // 枠連
-  QUINELLA: 'quinella', // 馬連
-  WIDE: 'wide', // ワイド
-  EXACTA: 'exacta', // 馬単
-  TRIFECTA: 'trifecta', // 三連単
-  TRIO: 'trio', // 三連複
+  WIN: 'win',
+  PLACE: 'place',
+  BRACKET_QUINELLA: 'bracket_quinella',
+  QUINELLA: 'quinella',
+  WIDE: 'wide',
+  EXACTA: 'exacta',
+  TRIFECTA: 'trifecta',
+  TRIO: 'trio',
 } as const;
 
 export type BetType = (typeof BET_TYPES)[keyof typeof BET_TYPES];
@@ -24,5 +24,5 @@ export const BET_TYPE_LABELS: Record<BetType, string> = {
 
 export interface BetDetail {
   type: BetType;
-  selections: number[]; // 馬番または枠番。順序が重要な場合は[1着, 2着, 3着]の順
+  selections: number[];
 }

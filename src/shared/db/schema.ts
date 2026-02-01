@@ -217,8 +217,8 @@ export const payoutResults = pgTable('payout_result', {
   raceId: uuid('raceId')
     .notNull()
     .references(() => races.id, { onDelete: 'cascade' }),
-  type: text('type').notNull(), // WIN, PLACE, etc.
-  combinations: jsonb('combinations').notNull(), // { numbers: number[], payout: number }[]
+  type: text('type').notNull(),
+  combinations: jsonb('combinations').notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
 });
 

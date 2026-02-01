@@ -5,7 +5,6 @@ import * as schema from './schema';
 async function main() {
   console.log('--- Starting Seeder ---');
 
-  // 1. Create Event
   const [event] = await db
     .insert(schema.events)
     .values({
@@ -19,7 +18,6 @@ async function main() {
 
   console.log(`Event created: ${event.name}`);
 
-  // 2. Create Race
   const [race] = await db
     .insert(schema.races)
     .values({
@@ -36,7 +34,6 @@ async function main() {
 
   console.log(`Race created: ${race.name}`);
 
-  // 3. Create Horses & Race Entries
   const horseData = [
     { name: 'オツルマルボーイ', gender: '牡', age: 6 },
     { name: 'ミックーロイル', gender: '牡', age: 6 },

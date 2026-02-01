@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Label
 export const Label = ({
   children,
   htmlFor,
@@ -15,7 +14,6 @@ export const Label = ({
   </label>
 );
 
-// Input
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className = '', ...props }, ref) => (
     <input
@@ -27,7 +25,6 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
 );
 Input.displayName = 'Input';
 
-// Select
 export const Select = ({
   children,
   value,

@@ -19,7 +19,6 @@ interface StandbyClientProps {
 }
 
 export function StandbyClient({ race, initialResults = [], isFinalized: initialIsFinalized }: StandbyClientProps) {
-  // Ensure modal doesn't auto-open on initial load
   const [showModal, setShowModal] = useState(false);
 
   const { results, fetchResults } = useRaceResults(race.id, initialResults, initialIsFinalized);

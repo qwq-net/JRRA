@@ -1,6 +1,6 @@
 import { BET_TYPES, BetDetail } from '@/types/betting';
 
-export const TOKUBARAI_RATE = 0.7; // 特払い率（70円返し）
+export const TOKUBARAI_RATE = 0.7;
 
 export interface Finisher {
   horseNumber: number;
@@ -25,11 +25,9 @@ export function isWinningBet(detail: BetDetail, finishers: Finisher[]): boolean 
       return selections[0] === f1.horseNumber;
 
     case BET_TYPES.PLACE:
-      // 3着以内に入れば的中
       return finishers.slice(0, 3).some((f) => f.horseNumber === selections[0]);
 
     case BET_TYPES.QUINELLA:
-      // 1-2着（順不同）
       return (
         f2 &&
         ((selections[0] === f1.horseNumber && selections[1] === f2.horseNumber) ||
@@ -37,18 +35,15 @@ export function isWinningBet(detail: BetDetail, finishers: Finisher[]): boolean 
       );
 
     case BET_TYPES.EXACTA:
-      // 1-2着（着順通り）
       return f2 && selections[0] === f1.horseNumber && selections[1] === f2.horseNumber;
 
     case BET_TYPES.WIDE: {
-      // 1-2, 1-3, 2-3着のいずれか（順不同）
       if (!f2) return false;
       const top3 = finishers.slice(0, 3).map((f) => f.horseNumber);
       return selections.every((s) => top3.includes(s));
     }
 
     case BET_TYPES.BRACKET_QUINELLA:
-      // 1-2着の枠番（順不同）
       return (
         f2 &&
         ((selections[0] === f1.bracketNumber && selections[1] === f2.bracketNumber) ||
@@ -56,14 +51,12 @@ export function isWinningBet(detail: BetDetail, finishers: Finisher[]): boolean 
       );
 
     case BET_TYPES.TRIO: {
-      // 1-3着（順不同）
       if (!f2 || !f3) return false;
       const top3 = finishers.slice(0, 3).map((f) => f.horseNumber);
       return selections.every((s) => top3.includes(s));
     }
 
     case BET_TYPES.TRIFECTA:
-      // 1-3着（着順通り）
       return (
         f2 &&
         f3 &&
@@ -100,19 +93,13 @@ export function calculatePayoutRate(
   let payoutPerUnit: number;
 
   if (winningCount > 1) {
-    // 複勝・ワイドなどの分割計算（JRA方式近似）
-    // (売上 - 総的中票) / 的中種類数 + 的中票
-    // これを1円単位で計算し、最後に100円あたりの倍率にする
     const profit = Math.max(0, netPool - totalWinningAmount);
     const dividedProfit = profit / winningCount;
     payoutPerUnit = (winningAmount + dividedProfit) / winningAmount;
   } else {
-    // 単勝などの通常計算
     payoutPerUnit = netPool / winningAmount;
   }
 
-  // JRA方式: 100円につき10円単位で切り捨て（例: 1.238倍 -> 1.2倍）
-  // 1.0倍を下回る場合は1.0倍保証（元返し）
   const rate = Math.floor(payoutPerUnit * 10) / 10;
   return Math.max(1.0, rate);
 }

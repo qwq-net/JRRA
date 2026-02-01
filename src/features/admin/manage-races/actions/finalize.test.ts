@@ -4,7 +4,6 @@ import { BET_TYPES } from '@/types/betting';
 import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { finalizeRace } from './finalize';
 
-// Mocks
 vi.mock('@/shared/config/auth', () => ({
   auth: vi.fn(),
   signIn: vi.fn(),
@@ -64,23 +63,21 @@ describe('finalizeRace', () => {
   it('should finalize race correctly', async () => {
     (auth as unknown as Mock).mockResolvedValue({ user: { role: 'ADMIN' } });
 
-    // Mock race entries
     mockTx.query.raceEntries.findMany.mockResolvedValue([
       { id: 'e1', horseNumber: 1, bracketNumber: 1, finishPosition: 1 },
       { id: 'e2', horseNumber: 2, bracketNumber: 2, finishPosition: 2 },
     ]);
 
-    // Mock bets
     mockTx.query.bets.findMany.mockResolvedValue([
       {
         id: 'b1',
         amount: 100,
-        details: { type: BET_TYPES.WIN, selections: [1] }, // Hit
+        details: { type: BET_TYPES.WIN, selections: [1] },
       },
       {
         id: 'b2',
         amount: 100,
-        details: { type: BET_TYPES.WIN, selections: [2] }, // Lost
+        details: { type: BET_TYPES.WIN, selections: [2] },
       },
     ]);
 
@@ -89,14 +86,11 @@ describe('finalizeRace', () => {
       { entryId: 'e2', finishPosition: 2 },
     ]);
 
-    // Verify updates
     expect(mockTx.update).toHaveBeenCalled();
 
-    // Verify bet status updates
     expect(mockTx.set).toHaveBeenCalledWith(expect.objectContaining({ status: 'HIT' }));
     expect(mockTx.set).toHaveBeenCalledWith(expect.objectContaining({ status: 'LOST' }));
 
-    // Verify payout results insertion
     expect(mockTx.insert).toHaveBeenCalled();
     expect(mockTx.values).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -105,7 +99,6 @@ describe('finalizeRace', () => {
       })
     );
 
-    // Verify race status update
     expect(mockTx.set).toHaveBeenCalledWith(expect.objectContaining({ status: 'CLOSED' }));
   });
 });

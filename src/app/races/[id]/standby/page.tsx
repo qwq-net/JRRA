@@ -50,7 +50,6 @@ export default async function RaceStandbyPage({ params }: { params: Promise<{ id
 
   const isFinalized = race.status === 'FINALIZED';
 
-  // 確定済みの場合は配当結果を事前に取得
   let initialResults: ClientPayoutResult[] = [];
   if (isFinalized) {
     const rawResults = await getPayoutResults(id);
@@ -60,7 +59,6 @@ export default async function RaceStandbyPage({ params }: { params: Promise<{ id
     }));
   }
 
-  // データを整形
   const tickets = userBets.map((bet) => {
     const details = bet.details as BetDetail;
     return {

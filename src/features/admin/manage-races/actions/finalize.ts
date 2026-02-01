@@ -22,7 +22,6 @@ export async function finalizeRace(
   }
 
   await db.transaction(async (tx) => {
-    // 1. 各出走馬の最終着順を更新
     for (const result of results) {
       await tx
         .update(raceEntries)
@@ -30,7 +29,6 @@ export async function finalizeRace(
         .where(eq(raceEntries.id, result.entryId));
     }
 
-    // 2. 着順情報の整理（的中判定用）
     const raceEntriesWithInfo = await tx.query.raceEntries.findMany({
       where: eq(raceEntries.raceId, raceId),
       with: { horse: true },
@@ -46,12 +44,10 @@ export async function finalizeRace(
 
     if (finishers.length === 0) throw new Error('No results provided');
 
-    // 3. 全ての購入馬券を取得
     const allBets = await tx.query.bets.findMany({
       where: eq(bets.raceId, raceId),
     });
 
-    // 4. 券種ごとのプール金と的中票の集計
     const poolByBetType: Record<string, number> = {};
     const winnersByBetType: Record<string, { bet: (typeof allBets)[0]; selectionKey: string }[]> = {};
     const winningSelectionAmounts: Record<string, Record<string, number>> = {};
@@ -71,11 +67,9 @@ export async function finalizeRace(
       }
     }
 
-    // 5. 払い戻しの実行
     const takeoutRate = options.payoutMode === 'TOTAL_DISTRIBUTION' ? 0 : options.takeoutRate;
-    const TOKUBARAI_RATE = 0.7; // 特払い率（70円返し）
+    const TOKUBARAI_RATE = 0.7;
 
-    // 払い戻し結果を集計して保存するためのバッファ
     const payoutCalculationsByType: Record<string, { numbers: number[]; payout: number }[]> = {};
 
     for (const bet of allBets) {
@@ -108,14 +102,13 @@ export async function finalizeRace(
           odds = rate.toFixed(1);
           status = 'HIT';
 
-          // 集計用に記録（重複を避けるために一票分だけ記録）
           if (!payoutCalculationsByType[type]) payoutCalculationsByType[type] = [];
           if (
             !payoutCalculationsByType[type].find(
               (p) => JSON.stringify(p.numbers) === JSON.stringify(betDetail.selections)
             )
           ) {
-            const unitPayout = Math.floor(100 * rate); // 100円あたりの配当
+            const unitPayout = Math.floor(100 * rate);
             payoutCalculationsByType[type].push({ numbers: betDetail.selections, payout: unitPayout });
           }
         } else {
@@ -129,10 +122,9 @@ export async function finalizeRace(
           odds = '0.7';
           status = 'REFUNDED';
 
-          // 特払いの記録
           if (!payoutCalculationsByType[type]) payoutCalculationsByType[type] = [];
           if (payoutCalculationsByType[type].length === 0) {
-            payoutCalculationsByType[type].push({ numbers: [], payout: 70 }); // 特払いは全馬（または空リスト）に対して70円
+            payoutCalculationsByType[type].push({ numbers: [], payout: 70 });
           }
         }
       }
@@ -144,7 +136,6 @@ export async function finalizeRace(
       }
     }
 
-    // 集計した配当結果をDBに保存 (すでにある場合は削除して再作成)
     const { payoutResults: payoutResultsTable } = await import('@/shared/db/schema');
     await tx.delete(payoutResultsTable).where(eq(payoutResultsTable.raceId, raceId));
 
@@ -156,12 +147,10 @@ export async function finalizeRace(
       });
     }
 
-    // レースステータスを CLOSED に変更 (すでにCLOSEDかもしれないが念のため)
     await tx
       .update(races)
       .set({
         status: 'CLOSED',
-        // finalizedAt はこの時点では設定しない
       })
       .where(eq(races.id, raceId));
   });

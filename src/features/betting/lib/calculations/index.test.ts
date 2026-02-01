@@ -172,10 +172,7 @@ describe('エッジケース', () => {
     });
 
     it('馬単: {1,1} * {3} = 1点（重複排除）', () => {
-      const selections = [
-        [1, 1], // effectively [1]
-        [3],
-      ];
+      const selections = [[1, 1], [3]];
       const count = calculateBetCount(selections, BET_TYPES.EXACTA);
       expect(count).toBe(1);
     });

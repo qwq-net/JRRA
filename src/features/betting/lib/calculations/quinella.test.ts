@@ -142,7 +142,7 @@ describe('枠連（BRACKET_QUINELLA）', () => {
       [2, 1],
     ]);
     const count = calculateBetCount(selections, BET_TYPES.BRACKET_QUINELLA, bracketHorseCount);
-    expect(count).toBe(2); // 1-1, 1-2 (2-2 is invalid)
+    expect(count).toBe(2);
   });
 
   it('ゾロ目処理: 1頭の枠は無効', () => {
@@ -155,7 +155,7 @@ describe('枠連（BRACKET_QUINELLA）', () => {
       [2, 1],
     ]);
     const count = calculateBetCount(selections, BET_TYPES.BRACKET_QUINELLA, bracketHorseCount);
-    expect(count).toBe(1); // Only 1-2. 1-1 is invalid (count<2), 2-2 is invalid (count<2)
+    expect(count).toBe(1);
   });
 
   it('重複除去: {1,2,3} * {2,3,4} = 6点', () => {

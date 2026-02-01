@@ -85,9 +85,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
           setIsClosed(true);
           toast.info('このレースの受付は終了しました');
         }
-      } catch {
-        // ignore heartbeat
-      }
+      } catch {}
     };
     return () => eventSource.close();
   }, [raceId]);

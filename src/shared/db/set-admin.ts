@@ -6,7 +6,6 @@ async function main() {
   console.log('--- Granting ADMIN role to the first user ---');
 
   try {
-    // 最初のユーザーを取得
     const firstUser = await db.query.users.findFirst({
       orderBy: [asc(users.createdAt)],
     });
@@ -16,7 +15,6 @@ async function main() {
       process.exit(1);
     }
 
-    // ADMIN権限を付与
     await db.update(users).set({ role: 'ADMIN' }).where(eq(users.id, firstUser.id));
 
     console.log(`Successfully granted ADMIN role to user: ${firstUser.name} (ID: ${firstUser.id})`);

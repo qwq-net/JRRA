@@ -38,7 +38,6 @@ export function filterValidCombinations(
   switch (betType) {
     case BET_TYPES.WIN:
     case BET_TYPES.PLACE:
-      // WIN/PLACE should validation typically happen before this, but if called, just return as is.
       return combinations;
 
     case BET_TYPES.QUINELLA:
@@ -74,17 +73,14 @@ export function calculateBetCount(
   betType: BetType,
   bracketHorseCount?: Map<number, number>
 ): number {
-  // 1. Optimize for single-column bets (WIN, PLACE)
   if (betType === BET_TYPES.WIN || betType === BET_TYPES.PLACE) {
     if (selections.length === 0 || selections[0].length === 0) return 0;
-    // Just count unique implementations in the first column
+
     return new Set(selections[0]).size;
   }
 
-  // 2. Deduplicate inputs for multi-column bets
   const uniqueSelections = deduplicateSelections(selections);
 
-  // 3. Generate and filter combinations
   const allCombos = generateCombinations(uniqueSelections);
   const validCombos = filterValidCombinations(allCombos, betType, bracketHorseCount);
   return validCombos.length;
@@ -95,18 +91,15 @@ export function getValidBetCombinations(
   betType: BetType,
   bracketHorseCount?: Map<number, number>
 ): number[][] {
-  // 1. Optimize for single-column bets (WIN, PLACE)
   if (betType === BET_TYPES.WIN || betType === BET_TYPES.PLACE) {
     if (selections.length === 0) return [];
-    // Return each unique horse as a single-element array
+
     const distinct = Array.from(new Set(selections[0])).sort((a, b) => a - b);
     return distinct.map((num) => [num]);
   }
 
-  // 2. Deduplicate inputs for multi-column bets
   const uniqueSelections = deduplicateSelections(selections);
 
-  // 3. Generate and filter combinations
   const allCombos = generateCombinations(uniqueSelections);
   return filterValidCombinations(allCombos, betType, bracketHorseCount);
 }
