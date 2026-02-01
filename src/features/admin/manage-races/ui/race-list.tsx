@@ -1,4 +1,5 @@
 import { Badge } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { getRaces } from '../actions';
@@ -61,7 +62,7 @@ export async function RaceList({ events }: RaceListProps) {
               </td>
               <td className="px-6 py-2 text-sm font-bold whitespace-nowrap text-gray-500">
                 {race.closingAt ? (
-                  new Date(race.closingAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                  <FormattedDate date={race.closingAt} options={{ hour: '2-digit', minute: '2-digit' }} />
                 ) : (
                   <span className="text-gray-200">-</span>
                 )}

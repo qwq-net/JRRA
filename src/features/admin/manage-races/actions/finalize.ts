@@ -68,7 +68,7 @@ export async function finalizeRace(
     }
 
     const takeoutRate = options.payoutMode === 'TOTAL_DISTRIBUTION' ? 0 : options.takeoutRate;
-    const TOKUBARAI_RATE = 0.7;
+    const currentTokubaraiRate = 1 - takeoutRate;
 
     const payoutCalculationsByType: Record<string, { numbers: number[]; payout: number }[]> = {};
 
@@ -79,10 +79,6 @@ export async function finalizeRace(
       const hasWinner = winners.length > 0;
 
       const winnerInfo = winners.find((w) => w.bet.id === bet.id);
-
-      let payout = 0;
-      let odds = '0.0';
-      let status: 'HIT' | 'LOST' | 'REFUNDED' = 'LOST';
 
       if (hasWinner) {
         if (winnerInfo) {
@@ -98,9 +94,6 @@ export async function finalizeRace(
             winningCount,
             takeoutRate
           );
-          payout = Math.floor(bet.amount * rate);
-          odds = rate.toFixed(1);
-          status = 'HIT';
 
           if (!payoutCalculationsByType[type]) payoutCalculationsByType[type] = [];
           if (
@@ -111,40 +104,57 @@ export async function finalizeRace(
             const unitPayout = Math.floor(100 * rate);
             payoutCalculationsByType[type].push({ numbers: betDetail.selections, payout: unitPayout });
           }
-        } else {
-          payout = 0;
-          odds = '0.0';
-          status = 'LOST';
         }
       } else {
         if (poolByBetType[type] > 0) {
-          payout = Math.floor(bet.amount * TOKUBARAI_RATE);
-          odds = '0.7';
-          status = 'REFUNDED';
-
           if (!payoutCalculationsByType[type]) payoutCalculationsByType[type] = [];
           if (payoutCalculationsByType[type].length === 0) {
-            payoutCalculationsByType[type].push({ numbers: [], payout: 70 });
+            const tokubaraiPayout = Math.floor(100 * currentTokubaraiRate);
+            payoutCalculationsByType[type].push({ numbers: [], payout: tokubaraiPayout });
           }
         }
       }
+    }
 
-      if (payout > 0) {
-        await tx.update(bets).set({ status, payout, odds }).where(eq(bets.id, bet.id));
-      } else {
-        await tx.update(bets).set({ status: 'LOST', payout: 0 }).where(eq(bets.id, bet.id));
+    const { getWinningCombinations: getWinningCombos } = await import('@/shared/utils/payout');
+    const { BET_TYPES } = await import('@/types/betting');
+
+    // API用、および表示用データの整理
+    for (const type of Object.values(BET_TYPES)) {
+      const winningCombos = getWinningCombos(type, finishers);
+      if (!payoutCalculationsByType[type]) payoutCalculationsByType[type] = [];
+
+      for (const combo of winningCombos) {
+        const alreadyExists = payoutCalculationsByType[type].find(
+          (p) => JSON.stringify(p.numbers) === JSON.stringify(combo)
+        );
+
+        if (!alreadyExists) {
+          // 的中馬番号は存在するが、誰も買っていなかった場合や的中者がいなかった場合（70円特払い）
+          payoutCalculationsByType[type].push({ numbers: combo, payout: 70 });
+        }
       }
+
+      // 重複や不要な [] エントリがあれば排除してソート（複勝などは馬番号順にしたい）
+      payoutCalculationsByType[type] = payoutCalculationsByType[type]
+        .filter((p) => p.numbers.length > 0)
+        .sort((a, b) => {
+          // 馬番号の文字列表現などでソート
+          return a.numbers.join('-').localeCompare(b.numbers.join('-'));
+        });
     }
 
     const { payoutResults: payoutResultsTable } = await import('@/shared/db/schema');
     await tx.delete(payoutResultsTable).where(eq(payoutResultsTable.raceId, raceId));
 
     for (const [type, combinations] of Object.entries(payoutCalculationsByType)) {
-      await tx.insert(payoutResultsTable).values({
-        raceId,
-        type,
-        combinations,
-      });
+      if (combinations.length > 0) {
+        await tx.insert(payoutResultsTable).values({
+          raceId,
+          type,
+          combinations,
+        });
+      }
     }
 
     await tx

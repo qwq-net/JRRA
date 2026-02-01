@@ -1,11 +1,18 @@
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
-import { races } from '@/shared/db/schema';
-import { Card } from '@/shared/ui';
+import { races, wallets } from '@/shared/db/schema';
+import { Badge, Card } from '@/shared/ui';
 import { desc, eq } from 'drizzle-orm';
-import { ChevronLeft, Zap } from 'lucide-react';
+import { ChevronLeft, Wallet, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+
+const STATUS_LABELS: Record<string, string> = {
+  SCHEDULED: '受付中',
+  CLOSED: '締切済み',
+  FINALIZED: '結果確定済み',
+  CANCELLED: 'キャンセル',
+};
 
 export default async function SokupatPage() {
   const session = await auth();
@@ -14,29 +21,35 @@ export default async function SokupatPage() {
     redirect('/login');
   }
 
-  const scheduledRaces = await db.query.races.findMany({
-    where: eq(races.status, 'SCHEDULED'),
-    orderBy: [desc(races.date)],
-    with: {
-      event: true,
-    },
-  });
+  const [allRaces, userWallets] = await Promise.all([
+    db.query.races.findMany({
+      orderBy: [desc(races.date)],
+      with: {
+        event: true,
+      },
+    }),
+    db.query.wallets.findMany({
+      where: eq(wallets.userId, session.user.id),
+    }),
+  ]);
 
-  const activeRaces = scheduledRaces.filter((race) => race.event.status !== 'COMPLETED');
+  const activeRaces = allRaces.filter((race) => race.event.status === 'ACTIVE');
 
   const eventGroups = activeRaces.reduce(
     (acc, race) => {
       const eventId = race.event.id;
       if (!acc[eventId]) {
+        const wallet = userWallets.find((w) => w.eventId === eventId);
         acc[eventId] = {
           event: race.event,
           races: [],
+          balance: wallet?.balance ?? 0,
         };
       }
       acc[eventId].races.push(race);
       return acc;
     },
-    {} as Record<string, { event: (typeof activeRaces)[0]['event']; races: typeof activeRaces }>
+    {} as Record<string, { event: (typeof activeRaces)[0]['event']; races: typeof activeRaces; balance: number }>
   );
 
   const sortedEventGroups = Object.values(eventGroups)
@@ -70,28 +83,42 @@ export default async function SokupatPage() {
         </div>
 
         {sortedEventGroups.length === 0 ? (
-          <Card className="p-12 text-center text-gray-500">現在、開催予定のレースはありません。</Card>
+          <Card className="p-12 text-center text-gray-500">現在、開催中のイベントはありません。</Card>
         ) : (
           <div className="space-y-8">
-            {sortedEventGroups.map(({ event, races }) => (
+            {sortedEventGroups.map(({ event, races, balance }) => (
               <section key={event.id}>
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">{event.name}</h2>
-                  <p className="text-sm text-gray-500">{event.date}</p>
+                <div className="mb-4 flex items-end justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">{event.name}</h2>
+                    <p className="text-sm text-gray-500">{event.date}</p>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-4 py-2 ring-1 ring-gray-200 ring-inset">
+                    <Wallet size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-nowrap text-gray-500">投票可能残高</span>
+                    <span className="text-lg font-black text-gray-900">
+                      {Math.floor(balance).toLocaleString()}
+                      <span className="ml-0.5 text-xs font-bold text-gray-500">円</span>
+                    </span>
+                  </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
                   {races.map((race) => (
                     <Link key={race.id} href={`/races/${race.id}`}>
                       <Card className="hover:border-primary p-6 transition-all hover:shadow-lg">
                         <div className="flex items-center justify-between">
-                          <div>
+                          <div className="flex-1">
                             <div className="mb-1 flex items-center gap-2">
                               <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gray-700 uppercase">
                                 {race.location}
                               </span>
                               <span className="text-xs font-medium text-gray-400">{race.date}</span>
+                              <Badge variant="status" label={STATUS_LABELS[race.status] || race.status} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900">{race.name}</h3>
+                            <h3 className="text-xl font-bold text-gray-900">
+                              {race.raceNumber ? `第${race.raceNumber}R ` : ''}
+                              {race.name}
+                            </h3>
                             <div className="mt-2 flex items-center gap-3 text-sm text-gray-500">
                               <span>{race.distance}m</span>
                               <span className="h-1 w-1 rounded-full bg-gray-300" />

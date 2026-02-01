@@ -2,7 +2,8 @@
 
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
-import { bets, races, transactions, wallets } from '@/shared/db/schema';
+import { bets, payoutResults as payoutResultsTable, races, transactions, wallets } from '@/shared/db/schema';
+import { BetDetail } from '@/types/betting';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -18,31 +19,62 @@ export async function finalizePayout(raceId: string) {
     throw new Error('Race already finalized or not found');
   }
 
+  // 配当結果を取得
+  const results = await db.select().from(payoutResultsTable).where(eq(payoutResultsTable.raceId, raceId));
+  const resultsMap = new Map<string, Array<{ numbers: number[]; payout: number }>>();
+  for (const r of results) {
+    resultsMap.set(r.type, r.combinations as Array<{ numbers: number[]; payout: number }>);
+  }
+
   await db.transaction(async (tx) => {
     const allBets = await tx.query.bets.findMany({
       where: eq(bets.raceId, raceId),
     });
 
     for (const bet of allBets) {
-      if (bet.status === 'HIT' || bet.status === 'REFUNDED') {
-        const payout = bet.payout ?? 0;
-        if (payout > 0) {
-          const wallet = await tx.query.wallets.findFirst({
-            where: eq(wallets.id, bet.walletId),
-          });
-          if (wallet) {
-            await tx
-              .update(wallets)
-              .set({ balance: wallet.balance + payout })
-              .where(eq(wallets.id, wallet.id));
+      const betDetail = bet.details as BetDetail;
+      const typeResults = resultsMap.get(betDetail.type) || [];
 
-            await tx.insert(transactions).values({
-              walletId: wallet.id,
-              type: 'PAYOUT',
-              amount: payout,
-              referenceId: bet.id,
-            });
-          }
+      // 的中判定
+      const hitResult = typeResults.find((r) => JSON.stringify(r.numbers) === JSON.stringify(betDetail.selections));
+
+      // 特払い判定（的中がない場合に払い戻されるケース）
+      const refundResult = !hitResult ? typeResults.find((r) => r.numbers.length === 0) : null;
+
+      let status: 'HIT' | 'LOST' | 'REFUNDED' = 'LOST';
+      let payout = 0;
+      let odds = '0.0';
+
+      if (hitResult) {
+        status = 'HIT';
+        payout = Math.floor((bet.amount * hitResult.payout) / 100);
+        odds = (hitResult.payout / 100).toFixed(1);
+      } else if (refundResult) {
+        status = 'REFUNDED';
+        payout = Math.floor((bet.amount * refundResult.payout) / 100);
+        odds = (refundResult.payout / 100).toFixed(1);
+      }
+
+      // 馬券情報の更新
+      await tx.update(bets).set({ status, payout, odds }).where(eq(bets.id, bet.id));
+
+      // ウォレットへの反映
+      if (payout > 0) {
+        const wallet = await tx.query.wallets.findFirst({
+          where: eq(wallets.id, bet.walletId),
+        });
+        if (wallet) {
+          await tx
+            .update(wallets)
+            .set({ balance: wallet.balance + payout })
+            .where(eq(wallets.id, wallet.id));
+
+          await tx.insert(transactions).values({
+            walletId: wallet.id,
+            type: 'PAYOUT',
+            amount: payout,
+            referenceId: bet.id,
+          });
         }
       }
     }
@@ -69,6 +101,5 @@ export async function finalizePayout(raceId: string) {
 }
 
 export async function getPayoutResults(raceId: string) {
-  const { payoutResults: payoutResultsTable } = await import('@/shared/db/schema');
   return db.select().from(payoutResultsTable).where(eq(payoutResultsTable.raceId, raceId));
 }

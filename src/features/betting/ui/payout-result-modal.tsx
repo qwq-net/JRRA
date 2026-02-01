@@ -70,23 +70,25 @@ export function PayoutResultModal({ raceName, raceDate, results, open, onOpenCha
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-px bg-gray-700 p-px md:grid-cols-2">
-            {/* Left Column Types */}
-            <div className="flex flex-col gap-px bg-gray-700">
+          <div className="flex flex-col gap-px bg-gray-700 p-px">
+            {/* Top Row: Win and Bracket Quinella (Half width each) */}
+            <div className="grid grid-cols-1 gap-px md:grid-cols-2">
               {renderResultBlock(results, BET_TYPES.WIN)}
-              {renderResultBlock(results, BET_TYPES.PLACE)}
-              {renderResultBlock(results, BET_TYPES.QUINELLA)}
-              {renderResultBlock(results, BET_TYPES.EXACTA)}
-              {renderResultBlock(results, BET_TYPES.TRIO)}
-              {renderResultBlock(results, BET_TYPES.TRIFECTA)}
+              {renderResultBlock(results, BET_TYPES.BRACKET_QUINELLA)}
             </div>
 
-            {/* Right Column Types */}
-            <div className="flex h-full flex-col gap-px bg-gray-700">
-              {renderResultBlock(results, BET_TYPES.BRACKET_QUINELLA)}
-              {renderResultBlock(results, BET_TYPES.WIDE)}
-              {/* Empty filler if needed */}
-              <div className="grow bg-black"></div>
+            {/* Middle Row: Place and Wide (Half width each, 3 rows fixed) */}
+            <div className="grid grid-cols-1 gap-px md:grid-cols-2">
+              {renderResultBlock(results, BET_TYPES.PLACE, 3)}
+              {renderResultBlock(results, BET_TYPES.WIDE, 3)}
+            </div>
+
+            {/* Bottom Section: Full Width results */}
+            <div className="flex flex-col gap-px">
+              {renderResultBlock(results, BET_TYPES.QUINELLA, 1, true)}
+              {renderResultBlock(results, BET_TYPES.EXACTA, 1, true)}
+              {renderResultBlock(results, BET_TYPES.TRIO, 1, true)}
+              {renderResultBlock(results, BET_TYPES.TRIFECTA, 1, true)}
             </div>
           </div>
         </Dialog.Content>
@@ -95,35 +97,40 @@ export function PayoutResultModal({ raceName, raceDate, results, open, onOpenCha
   );
 }
 
-function renderResultBlock(results: ResultItem[], type: BetType) {
+function renderResultBlock(results: ResultItem[], type: BetType, minRows: number = 1, fullWidth: boolean = false) {
   const item = results.find((r) => r.type === type);
+  const data = item?.combinations || [];
 
-  const combinations = item?.combinations || [];
+  const rows = [...data];
+  while (rows.length < minRows) {
+    rows.push({ numbers: [], payout: 70 });
+  }
 
   return (
-    <div className="flex min-h-12 bg-black text-white">
+    <div className={`flex min-h-12 bg-black text-white ${fullWidth ? 'w-full' : ''}`}>
       {/* Label Box */}
       <div
         className={`flex w-24 shrink-0 items-center justify-center text-lg font-bold tracking-widest ${TYPE_COLORS[type]} border-r border-gray-700`}
       >
-        {TYPE_LABELS[type]}
+        <span className="text-center leading-tight whitespace-pre-line">{TYPE_LABELS[type]}</span>
       </div>
 
       {/* Combinations List */}
       <div className="flex flex-1 flex-col">
-        {combinations.length > 0 ? (
-          combinations.map((combo, idx) => (
+        {rows.map((row, idx) => {
+          const isPlaceholder = row.numbers.length === 0;
+          return (
             <div
               key={idx}
-              className="flex flex-1 items-center justify-between border-b border-gray-800 px-4 py-2 last:border-0"
+              className="flex min-h-12 flex-1 items-center justify-between border-b border-gray-800 px-4 py-2 last:border-0"
             >
-              <div className="font-mono text-2xl font-bold tracking-wider">{combo.numbers.join(' - ')}</div>
-              <div className="w-32 text-right font-mono text-xl font-bold">{combo.payout.toLocaleString()}円</div>
+              <div className="font-mono text-2xl font-bold tracking-wider">
+                {isPlaceholder ? '-' : row.numbers.join(' - ')}
+              </div>
+              <div className="w-32 text-right font-mono text-xl font-bold">{row.payout.toLocaleString()}円</div>
             </div>
-          ))
-        ) : (
-          <div className="flex flex-1 items-center justify-center px-4 py-2 text-gray-600">-</div>
-        )}
+          );
+        })}
       </div>
     </div>
   );

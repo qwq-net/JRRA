@@ -3,6 +3,7 @@
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
 import { races } from '@/shared/db/schema';
+import { parseJSTToUTC } from '@/shared/utils/date';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { raceSchema } from '../model/schema';
@@ -51,7 +52,7 @@ export async function createRace(formData: FormData) {
     distance: parse.data.distance,
     surface: parse.data.surface,
     condition: parse.data.condition,
-    closingAt: parse.data.closingAt ? new Date(parse.data.closingAt) : null,
+    closingAt: parse.data.closingAt ? parseJSTToUTC(parse.data.closingAt) : null,
   });
 
   revalidatePath('/admin/races');

@@ -1,3 +1,6 @@
+'use client';
+
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 export interface Transaction {
@@ -43,12 +46,15 @@ export function TransactionList({ transactions }: TransactionListProps) {
               <div>
                 <div className="font-bold text-gray-900">{tx.description || typeLabels[tx.type] || tx.type}</div>
                 <div className="text-xs text-gray-400">
-                  {new Date(tx.createdAt).toLocaleString('ja-JP', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  <FormattedDate
+                    date={tx.createdAt}
+                    options={{
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }}
+                  />
                 </div>
               </div>
             </div>

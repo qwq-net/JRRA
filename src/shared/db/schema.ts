@@ -22,10 +22,12 @@ export const users = pgTable('user', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name'),
+  email: text('email').unique(),
+  emailVerified: timestamp('email_verified', { mode: 'date', withTimezone: true }),
   image: text('image'),
   role: roleEnum('role').default('USER').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -34,12 +36,12 @@ export const users = pgTable('user', {
 export const accounts = pgTable(
   'account',
   {
-    userId: text('userId')
+    userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     type: text('type').$type<AdapterAccount['type']>().notNull(),
     provider: text('provider').notNull(),
-    providerAccountId: text('providerAccountId').notNull(),
+    providerAccountId: text('provider_account_id').notNull(),
     refresh_token: text('refresh_token'),
     access_token: text('access_token'),
     expires_at: integer('expires_at'),
@@ -56,11 +58,11 @@ export const accounts = pgTable(
 );
 
 export const sessions = pgTable('session', {
-  sessionToken: text('sessionToken').primaryKey(),
-  userId: text('userId')
+  sessionToken: text('session_token').primaryKey(),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
+  expires: timestamp('expires', { mode: 'date', withTimezone: true }).notNull(),
 });
 
 export const verificationTokens = pgTable(
@@ -68,7 +70,7 @@ export const verificationTokens = pgTable(
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
-    expires: timestamp('expires', { mode: 'date' }).notNull(),
+    expires: timestamp('expires', { mode: 'date', withTimezone: true }).notNull(),
   },
   (verificationToken) => ({
     compositePk: primaryKey({
@@ -83,11 +85,11 @@ export const events = pgTable('event', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
   description: text('description'),
-  distributeAmount: bigint('distributeAmount', { mode: 'number' }).notNull(),
+  distributeAmount: bigint('distribute_amount', { mode: 'number' }).notNull(),
   status: eventStatusEnum('status').default('SCHEDULED').notNull(),
   date: date('date').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -95,14 +97,14 @@ export const events = pgTable('event', {
 
 export const wallets = pgTable('wallet', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: text('userId')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  eventId: uuid('eventId')
+  eventId: uuid('event_id')
     .notNull()
     .references(() => events.id, { onDelete: 'cascade' }),
   balance: bigint('balance', { mode: 'number' }).default(0).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const transactionTypeEnum = pgEnum('transaction_type', [
@@ -117,13 +119,13 @@ export const transactions = pgTable(
   'transaction',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    walletId: uuid('walletId')
+    walletId: uuid('wallet_id')
       .notNull()
       .references(() => wallets.id, { onDelete: 'cascade' }),
     type: transactionTypeEnum('type').notNull(),
     amount: bigint('amount', { mode: 'number' }).notNull(),
-    referenceId: uuid('referenceId'),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    referenceId: uuid('reference_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     referenceIdx: index('transaction_reference_idx').on(table.referenceId),
@@ -139,10 +141,10 @@ export const horses = pgTable('horse', {
   age: integer('age'),
   origin: horseOriginEnum('origin').default('DOMESTIC').notNull(),
   notes: text('notes'),
-  sireId: uuid('sireId'),
-  damId: uuid('damId'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  sireId: uuid('sire_id'),
+  damId: uuid('dam_id'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -152,21 +154,21 @@ export const raceStatusEnum = pgEnum('race_status', ['SCHEDULED', 'CLOSED', 'FIN
 
 export const races = pgTable('race', {
   id: uuid('id').defaultRandom().primaryKey(),
-  eventId: uuid('eventId')
+  eventId: uuid('event_id')
     .notNull()
     .references(() => events.id, { onDelete: 'cascade' }),
   date: date('date').notNull(),
   location: text('location').notNull(),
   name: text('name').notNull(),
-  raceNumber: integer('raceNumber'),
+  raceNumber: integer('race_number'),
   distance: integer('distance').notNull(),
   surface: text('surface').notNull(),
   condition: text('condition'),
   status: raceStatusEnum('status').default('SCHEDULED').notNull(),
-  closingAt: timestamp('closingAt'),
-  finalizedAt: timestamp('finalizedAt'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  closingAt: timestamp('closing_at', { withTimezone: true }),
+  finalizedAt: timestamp('finalized_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -176,13 +178,13 @@ export const betStatusEnum = pgEnum('bet_status', ['PENDING', 'HIT', 'LOST', 'RE
 
 export const bets = pgTable('bet', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: text('userId')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  raceId: uuid('raceId')
+  raceId: uuid('race_id')
     .notNull()
     .references(() => races.id, { onDelete: 'cascade' }),
-  walletId: uuid('walletId')
+  walletId: uuid('wallet_id')
     .notNull()
     .references(() => wallets.id, { onDelete: 'cascade' }),
   details: jsonb('details').notNull(),
@@ -190,27 +192,27 @@ export const bets = pgTable('bet', {
   odds: numeric('odds'),
   payout: bigint('payout', { mode: 'number' }),
   status: betStatusEnum('status').default('PENDING').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const raceEntryStatusEnum = pgEnum('race_entry_status', ['ENTRANT', 'SCRATCHED', 'EXCLUDED']);
 
 export const raceEntries = pgTable('race_entry', {
   id: uuid('id').defaultRandom().primaryKey(),
-  raceId: uuid('raceId')
+  raceId: uuid('race_id')
     .notNull()
     .references(() => races.id, { onDelete: 'cascade' }),
-  horseId: uuid('horseId')
+  horseId: uuid('horse_id')
     .notNull()
     .references(() => horses.id, { onDelete: 'cascade' }),
-  bracketNumber: integer('bracketNumber'),
-  horseNumber: integer('horseNumber'),
+  bracketNumber: integer('bracket_number'),
+  horseNumber: integer('horse_number'),
   jockey: text('jockey'),
   weight: integer('weight'),
-  finishPosition: integer('finishPosition'),
+  finishPosition: integer('finish_position'),
   status: raceEntryStatusEnum('status').default('ENTRANT').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -218,12 +220,12 @@ export const raceEntries = pgTable('race_entry', {
 
 export const payoutResults = pgTable('payout_result', {
   id: uuid('id').defaultRandom().primaryKey(),
-  raceId: uuid('raceId')
+  raceId: uuid('race_id')
     .notNull()
     .references(() => races.id, { onDelete: 'cascade' }),
   type: text('type').notNull(),
   combinations: jsonb('combinations').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const walletRelations = relations(wallets, ({ one, many }) => ({

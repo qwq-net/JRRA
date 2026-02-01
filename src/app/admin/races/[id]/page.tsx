@@ -5,6 +5,7 @@ import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
 import { horses, raceEntries } from '@/shared/db/schema';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { getBracketColor } from '@/shared/utils/bracket';
 import { eq } from 'drizzle-orm';
 import { AlarmClock, ChevronLeft } from 'lucide-react';
@@ -56,9 +57,11 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
               <AlarmClock className="h-4 w-4" />
               <span>
                 締切:{' '}
-                {race.closingAt
-                  ? race.closingAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-                  : '手動'}
+                {race.closingAt ? (
+                  <FormattedDate date={race.closingAt} options={{ hour: '2-digit', minute: '2-digit' }} />
+                ) : (
+                  '手動'
+                )}
               </span>
             </div>
           </div>
@@ -109,10 +112,16 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                 bracketNumber: e.bracketNumber,
               }))}
               race={{
+                id: race.id,
+                eventId: race.eventId,
+                date: race.date,
+                location: race.location,
+                name: race.name,
+                raceNumber: race.raceNumber,
                 status: race.status,
-                surface: race.surface,
+                surface: race.surface as '芝' | 'ダート',
                 distance: race.distance,
-                condition: race.condition,
+                condition: race.condition as '良' | '稍重' | '重' | '不良' | null,
                 closingAt: race.closingAt ? race.closingAt.toISOString() : null,
               }}
             />

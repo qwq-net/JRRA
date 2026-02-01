@@ -33,13 +33,23 @@ export function Badge({ label, variant, className }: BadgeProps) {
       case 'status':
         switch (label) {
           case 'SCHEDULED':
+          case '受付中':
+            return 'bg-green-100 text-green-800';
+          case 'ACTIVE':
             return 'bg-blue-100 text-blue-800';
           case 'CLOSED':
-            return 'bg-yellow-100 text-yellow-800';
+          case '締切済み':
+            return 'bg-orange-100 text-orange-800';
           case 'FINALIZED':
+          case '結果確定済み':
+            return 'bg-indigo-100 text-indigo-800';
+          case 'COMPLETED':
             return 'bg-gray-100 text-gray-800';
-          default:
+          case 'CANCELLED':
+          case 'キャンセル':
             return 'bg-red-100 text-red-800';
+          default:
+            return 'bg-gray-100 text-gray-800';
         }
 
       default:

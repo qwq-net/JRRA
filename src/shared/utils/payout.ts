@@ -103,3 +103,62 @@ export function calculatePayoutRate(
   const rate = Math.floor(payoutPerUnit * 10) / 10;
   return Math.max(1.0, rate);
 }
+
+/**
+ * 的中した組み合わせ馬番号（または枠番号）をすべて取得する
+ * @param type 券種
+ * @param finishers 着順（1着、2着、3着...の順）
+ */
+export function getWinningCombinations(type: string, finishers: Finisher[]): number[][] {
+  const f1 = finishers[0];
+  const f2 = finishers[1];
+  const f3 = finishers[2];
+
+  if (!f1) return [];
+
+  switch (type) {
+    case 'win':
+      return [[f1.horseNumber]];
+
+    case 'place':
+      return finishers.slice(0, 3).map((f) => [f.horseNumber]);
+
+    case 'quinella':
+      if (!f2) return [];
+      return [[f1.horseNumber, f2.horseNumber].sort((a, b) => a - b)];
+
+    case 'exacta':
+      if (!f2) return [];
+      return [[f1.horseNumber, f2.horseNumber]];
+
+    case 'wide': {
+      if (!f2) return [];
+      const top3 = finishers.slice(0, 3).map((f) => f.horseNumber);
+      const combos: number[][] = [];
+      if (top3.length >= 2) {
+        combos.push([top3[0], top3[1]].sort((a, b) => a - b));
+      }
+      if (top3.length >= 3) {
+        combos.push([top3[0], top3[2]].sort((a, b) => a - b));
+        combos.push([top3[1], top3[2]].sort((a, b) => a - b));
+      }
+      return combos;
+    }
+
+    case 'bracket_quinella':
+      if (!f2) return [];
+      return [[f1.bracketNumber, f2.bracketNumber].sort((a, b) => a - b)];
+
+    case 'trio': {
+      if (!f1 || !f2 || !f3) return [];
+      return [[f1.horseNumber, f2.horseNumber, f3.horseNumber].sort((a, b) => a - b)];
+    }
+
+    case 'trifecta':
+      if (!f1 || !f2 || !f3) return [];
+      return [[f1.horseNumber, f2.horseNumber, f3.horseNumber]];
+
+    default:
+      return [];
+  }
+}

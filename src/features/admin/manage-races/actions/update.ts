@@ -3,6 +3,7 @@
 import { auth } from '@/shared/config/auth';
 import { db } from '@/shared/db';
 import { races } from '@/shared/db/schema';
+import { parseJSTToUTC } from '@/shared/utils/date';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { raceSchema } from '../model/schema';
@@ -32,20 +33,37 @@ export async function updateRace(id: string, formData: FormData) {
     throw new Error('Invalid Input');
   }
 
-  await db
-    .update(races)
-    .set({
-      eventId: parse.data.eventId,
-      date: parse.data.date,
-      location: parse.data.location,
-      name: parse.data.name,
-      raceNumber: parse.data.raceNumber,
-      distance: parse.data.distance,
-      surface: parse.data.surface,
-      condition: parse.data.condition,
-      closingAt: parse.data.closingAt ? new Date(parse.data.closingAt) : null,
-    })
-    .where(eq(races.id, id));
+  const now = new Date();
+  const newClosingAt = parse.data.closingAt ? parseJSTToUTC(parse.data.closingAt) : null;
+
+  await db.transaction(async (tx) => {
+    const race = await tx.query.races.findFirst({
+      where: eq(races.id, id),
+    });
+
+    if (!race) throw new Error('Race not found');
+
+    let newStatus = race.status;
+    if (race.status === 'CLOSED' && newClosingAt && newClosingAt > now) {
+      newStatus = 'SCHEDULED';
+    }
+
+    await tx
+      .update(races)
+      .set({
+        eventId: parse.data.eventId,
+        date: parse.data.date,
+        location: parse.data.location,
+        name: parse.data.name,
+        raceNumber: parse.data.raceNumber,
+        distance: parse.data.distance,
+        surface: parse.data.surface,
+        condition: parse.data.condition,
+        closingAt: newClosingAt,
+        status: newStatus,
+      })
+      .where(eq(races.id, id));
+  });
 
   revalidatePath('/admin/races');
   revalidatePath(`/admin/races/${id}`);

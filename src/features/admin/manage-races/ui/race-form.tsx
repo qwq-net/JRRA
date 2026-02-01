@@ -1,5 +1,6 @@
 'use client';
 
+import { toJSTString } from '@/shared/utils/date';
 import { Calendar, MapPin } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -29,9 +30,7 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = true 
   const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
   const [surface, setSurface] = useState(initialData?.surface || '芝');
   const [condition, setCondition] = useState(initialData?.condition || '良');
-  const [closingAt, setClosingAt] = useState(
-    initialData?.closingAt ? new Date(initialData.closingAt).toISOString().slice(0, 16) : ''
-  );
+  const [closingAt, setClosingAt] = useState(toJSTString(initialData?.closingAt));
 
   async function handleSubmit(formData: FormData) {
     try {

@@ -6,7 +6,6 @@ import Discord from 'next-auth/providers/discord';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db, {
-    // @ts-expect-error: email と emailVerified はスキーマから削除したが、Adapter 型では必須のため
     usersTable: schema.users,
     accountsTable: schema.accounts,
     sessionsTable: schema.sessions,

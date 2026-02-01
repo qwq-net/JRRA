@@ -3,6 +3,7 @@ import { BetTable } from '@/features/betting/ui/bet-table';
 import { getEventWallets } from '@/features/economy/wallet';
 import { auth } from '@/shared/config/auth';
 import { Button, Card, CardContent } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { AlarmClock, ChevronLeft, Info } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
@@ -37,8 +38,8 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
             <p className="text-gray-500">
               馬券を購入するには、まずマイページからイベントに参加して資金を受け取ってください。
             </p>
-            <Link href="/mypage">
-              <Button className="mt-6">マイページへ戻る</Button>
+            <Link href="/mypage/claim">
+              <Button className="mt-6">お小遣いを貰いに行く</Button>
             </Link>
           </CardContent>
         </Card>
@@ -49,11 +50,11 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
   return (
     <div className="mx-auto max-w-5xl p-4 lg:p-8">
       <Link
-        href="/mypage"
+        href="/mypage/sokupat"
         className="mb-6 flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-900"
       >
         <ChevronLeft size={16} />
-        マイページへ戻る
+        即PATトップへ戻る
       </Link>
 
       <div className="mb-8 space-y-2">
@@ -67,7 +68,9 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
           {race.closingAt && (
             <div className="flex items-center gap-1.5 text-sm font-bold text-red-600">
               <AlarmClock className="h-4 w-4" />
-              <span>締切: {race.closingAt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>
+                締切: <FormattedDate date={race.closingAt} options={{ hour: '2-digit', minute: '2-digit' }} />
+              </span>
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { getBetsByRace, getRaceWithBets } from '@/features/admin/manage-bets/actions/read';
 import { Badge } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -84,7 +85,7 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
                       {bet.amount.toLocaleString()}円
                     </td>
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                      {new Date(bet.createdAt).toLocaleString('ja-JP')}
+                      <FormattedDate date={bet.createdAt} />
                     </td>
                     <td className="px-6 py-4 text-sm whitespace-nowrap">
                       {bet.status === 'PENDING' ? (

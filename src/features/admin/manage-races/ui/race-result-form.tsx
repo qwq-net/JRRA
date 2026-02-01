@@ -1,6 +1,7 @@
 'use client';
 
-import { Badge, Button, Input, Label, Select, SelectItem } from '@/shared/ui';
+import { Badge, Button, Label, Select, SelectItem } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { getBracketColor } from '@/shared/utils/bracket';
 import { cn } from '@/shared/utils/cn';
 import {
@@ -27,11 +28,12 @@ import {
   Settings2,
   Wrench,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { closeRace, finalizePayout, finalizeRace } from '../actions';
+import { resetRaceResults } from '../actions/revert';
+import { EditClosingAtDialog } from './edit-closing-at-dialog';
 
 interface Entry {
   id: string;
@@ -45,10 +47,16 @@ interface RaceResultFormProps {
   entries: Entry[];
   hasPayoutResults?: boolean;
   race: {
+    id: string;
+    eventId: string;
+    date: string;
+    location: string;
+    name: string;
+    raceNumber: number | null;
     status: string;
-    surface: string;
+    surface: '芝' | 'ダート';
     distance: number;
-    condition: string | null;
+    condition: '良' | '稍重' | '重' | '不良' | null;
     closingAt: string | null;
   };
 }
@@ -83,9 +91,11 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
     <div
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...listeners}
       className={cn(
-        'group relative flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2 ring-offset-2 transition-all duration-200',
-        isDragging ? 'ring-primary/40 opacity-0 ring-2' : 'hover:border-gray-300'
+        'group relative flex cursor-grab items-center gap-3 rounded-xl border border-gray-200 bg-white p-2 ring-offset-2 transition-all duration-200 select-none active:cursor-grabbing',
+        isDragging ? 'ring-primary/40 opacity-0 ring-2' : 'hover:border-gray-300 hover:bg-gray-50'
       )}
     >
       <div
@@ -97,14 +107,9 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
         {position}
       </div>
 
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        className="cursor-grab p-1 text-gray-300 transition-colors group-hover:text-gray-500"
-      >
+      <div className="p-1 text-gray-300 transition-colors group-hover:text-gray-500">
         <GripVertical className="h-5 w-5" />
-      </button>
+      </div>
 
       <div className="flex items-center gap-2">
         <span
@@ -161,8 +166,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
     return () => clearInterval(timer);
   }, [race.closingAt, race.status]);
 
-  const [payoutMode, setPayoutMode] = useState<'TOTAL_DISTRIBUTION' | 'MANUAL'>('TOTAL_DISTRIBUTION');
-  const [takeoutRate, setTakeoutRate] = useState<number>(25);
+  const [takeoutRate, setTakeoutRate] = useState<number>(0);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -196,8 +200,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
         await closeRace(raceId);
         toast.success('受付を終了しました');
         router.refresh();
-      } catch (error) {
-        console.error(error);
+      } catch {
         toast.error('エラーが発生しました');
       }
     });
@@ -219,6 +222,19 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
     }
   };
 
+  const handleServerReset = () => {
+    if (!confirm('着順設定をリセットしてもよろしいですか？')) return;
+    startTransition(async () => {
+      try {
+        await resetRaceResults(raceId);
+        toast.success('着順設定を初期状態にリセットしました');
+        router.refresh();
+      } catch {
+        toast.error('リセットに失敗しました');
+      }
+    });
+  };
+
   const handleSubmit = () => {
     setShowConfirm(false);
     startTransition(async () => {
@@ -229,15 +245,14 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
 
       try {
         await finalizeRace(raceId, results, {
-          payoutMode,
+          payoutMode: takeoutRate === 0 ? 'TOTAL_DISTRIBUTION' : 'MANUAL',
           takeoutRate: takeoutRate / 100,
         });
         toast.success('着順を確定しました（払い戻し計算完了）', {
           icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
         });
         router.refresh();
-      } catch (error) {
-        console.error(error);
+      } catch {
         toast.error('エラーが発生しました');
       }
     });
@@ -346,22 +361,31 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                 <span className="font-medium text-gray-500">受付終了予定</span>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-gray-900">
-                    {race.closingAt
-                      ? new Date(race.closingAt).toLocaleString('ja-JP', {
+                    {race.closingAt ? (
+                      <FormattedDate
+                        date={race.closingAt}
+                        options={{
                           month: 'numeric',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit',
-                        })
-                      : '手動'}
+                        }}
+                      />
+                    ) : (
+                      '手動'
+                    )}
                   </span>
-                  <Link
-                    href={`/admin/races`}
-                    className="text-gray-400 transition-colors hover:text-blue-500"
-                    title="締切設定を変更"
-                  >
-                    <Wrench className="h-3.5 w-3.5" />
-                  </Link>
+                  <EditClosingAtDialog
+                    race={{
+                      ...race,
+                      closingAt: race.closingAt ? new Date(race.closingAt) : null,
+                    }}
+                    trigger={
+                      <button className="text-gray-400 transition-colors hover:text-blue-500" title="締切設定を変更">
+                        <Wrench className="h-3.5 w-3.5" />
+                      </button>
+                    }
+                  />
                 </div>
               </div>
               {timeLeft && (
@@ -396,39 +420,20 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-gray-500">配当方式</Label>
                 <Select
-                  value={payoutMode}
-                  onValueChange={(v: string) => setPayoutMode(v as 'TOTAL_DISTRIBUTION' | 'MANUAL')}
+                  value={takeoutRate === 0 ? 'TOTAL' : 'STANDARD'}
+                  onValueChange={(v: string) => setTakeoutRate(v === 'TOTAL' ? 0 : 30)}
                 >
-                  <SelectItem value="TOTAL_DISTRIBUTION">全額配分 (控除率0%)</SelectItem>
-                  <SelectItem value="MANUAL">パリミュチュエル (控除率指定)</SelectItem>
+                  <SelectItem value="TOTAL">全額配分 (控除率0%)</SelectItem>
+                  <SelectItem value="STANDARD">標準配分 (控除率30%)</SelectItem>
                 </Select>
               </div>
-
-              {payoutMode === 'MANUAL' && (
-                <div className="animate-in slide-in-from-right-2 fade-in space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-500">控除率 (%)</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={takeoutRate}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setTakeoutRate(parseInt(e.target.value) || 0)
-                      }
-                      className="h-9 font-bold"
-                    />
-                    <span className="text-sm font-bold text-gray-400">%</span>
-                  </div>
-                </div>
-              )}
 
               <div className="flex items-start gap-2 rounded-xl bg-blue-50/50 p-3 ring-1 ring-blue-100/50">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
                 <p className="text-[10px] leading-relaxed text-blue-600/80">
-                  {payoutMode === 'TOTAL_DISTRIBUTION'
-                    ? '全ての賭け金を的中者で山分けします。'
-                    : '設定した控除率を差し引いた金額を的中者で分配します。'}
+                  {takeoutRate === 0
+                    ? '全ての賭け金を的中者で山分けします。的中なし時は100円の特払いとなります。'
+                    : '30%を差し引いた金額を的中者で分配します。的中なし時は70円の特払いとなります。'}
                 </p>
               </div>
             </div>
@@ -438,7 +443,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
             {race.status === 'SCHEDULED' && (
               <Button
                 variant="outline"
-                className="w-full py-6 text-sm font-bold text-red-500 hover:bg-red-50 hover:text-red-600"
+                className="w-full py-6 text-sm font-bold"
                 onClick={handleManualClose}
                 disabled={isPending}
               >
@@ -454,9 +459,9 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                       'shadow-primary/20 relative w-full py-6 text-lg font-black shadow-lg transition-all duration-300 active:scale-[0.98]',
                       isChanged ? 'from-primary to-primary/80 bg-linear-to-br' : 'grayscale-50'
                     )}
-                    disabled={isPending || isPayoutMoving}
+                    disabled={isPending || isPayoutMoving || hasPayoutResults}
                   >
-                    {isPending ? '確定処理中...' : '着順を確定する'}
+                    {isPending ? '確定処理中...' : hasPayoutResults ? '着順確定済み' : '着順を確定する'}
                     {isChanged && !isPending && (
                       <span className="absolute -top-1 -right-1 h-3 w-3 animate-ping rounded-full bg-white/40" />
                     )}
@@ -476,7 +481,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                         <div>
                           この操作を行うと、投票された馬券の払い戻し計算が
                           <span className="mx-1 font-bold text-gray-900 underline">
-                            {payoutMode === 'TOTAL_DISTRIBUTION' ? '全額配分' : `控除率 ${takeoutRate}%`}
+                            {takeoutRate === 0 ? '全額配分' : `控除率 ${takeoutRate}%`}
                           </span>
                           で実行されます。
                           <br />
@@ -515,13 +520,23 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
             )}
 
             {hasPayoutResults && (
-              <Button
-                className="relative w-full border-2 border-amber-500 bg-white py-6 text-lg font-black text-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-50"
-                onClick={handlePayoutFinalize}
-                disabled={isPayoutMoving || isPending}
-              >
-                {isPayoutMoving ? '払い戻し処理中...' : '払い戻しを確定する'}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  className="relative w-full border-2 border-amber-500 bg-white py-6 text-lg font-black text-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-50"
+                  onClick={handlePayoutFinalize}
+                  disabled={isPayoutMoving || isPending}
+                >
+                  {isPayoutMoving ? '払い戻し処理中...' : '払い戻しを確定する'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full text-xs font-bold text-gray-400 hover:text-red-500"
+                  onClick={handleServerReset}
+                  disabled={isPayoutMoving || isPending}
+                >
+                  着順設定をやり直す（リセット）
+                </Button>
+              </div>
             )}
           </div>
         </div>
