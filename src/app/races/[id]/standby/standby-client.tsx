@@ -1,12 +1,10 @@
 'use client';
 
-import { getPayoutResults } from '@/features/admin/manage-races/actions';
+import { useRaceEvents } from '@/features/betting/lib/hooks/use-race-events';
+import { PayoutResult, useRaceResults } from '@/features/betting/lib/hooks/use-race-results';
 import { PayoutResultModal } from '@/features/betting/ui/payout-result-modal';
-import { BetType } from '@/types/betting';
 import { AlarmClock, Loader2, WifiOff } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+import { useCallback, useState } from 'react';
 
 interface StandbyClientProps {
   race: {
@@ -20,108 +18,22 @@ interface StandbyClientProps {
   isFinalized: boolean;
 }
 
-interface PayoutResult {
-  type: BetType;
-  combinations: {
-    numbers: number[];
-    payout: number;
-    popularity?: number;
-  }[];
-}
-
 export function StandbyClient({ race, initialResults = [], isFinalized: initialIsFinalized }: StandbyClientProps) {
-  const router = useRouter();
-  const [showModal, setShowModal] = useState(false); // ページ表示時に自動で開かないように修正
-  const [results, setResults] = useState<PayoutResult[]>(initialResults);
-  const [connectionStatus, setConnectionStatus] = useState<'CONNECTING' | 'CONNECTED' | 'DISCONNECTED'>(
-    initialIsFinalized ? 'DISCONNECTED' : 'CONNECTING'
-  );
+  // Ensure modal doesn't auto-open on initial load
+  const [showModal, setShowModal] = useState(false);
 
-  const fetchResults = useCallback(async () => {
-    try {
-      const data = await getPayoutResults(race.id);
-      setResults(data as unknown as PayoutResult[]);
-    } catch (e) {
-      console.error('Failed to fetch payout results:', e);
-    }
-  }, [race.id]);
+  const { results, fetchResults } = useRaceResults(race.id, initialResults, initialIsFinalized);
 
-  // Handle results fetching only if not already provided
-  const hasFetched = useRef(initialResults.length > 0);
-  useEffect(() => {
-    if (initialIsFinalized && !hasFetched.current) {
-      hasFetched.current = true;
-      const timer = setTimeout(() => {
-        fetchResults();
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [initialIsFinalized, fetchResults]);
+  const handleRaceBroadcast = useCallback(async () => {
+    await fetchResults();
+    setShowModal(true);
+  }, [fetchResults]);
 
-  // SSE connection only if not finalized
-  useEffect(() => {
-    if (initialIsFinalized) {
-      return;
-    }
-
-    let eventSource: EventSource | null = null;
-    let heartbeatTimeout: NodeJS.Timeout;
-
-    const connectSSE = () => {
-      setConnectionStatus('CONNECTING');
-      eventSource = new EventSource('/api/events/race-status');
-
-      eventSource.onopen = () => {
-        setConnectionStatus('CONNECTED');
-        console.log('[SSE] Connected');
-      };
-
-      eventSource.onmessage = async (event) => {
-        if (event.data === ': ping') {
-          resetHeartbeat();
-          return;
-        }
-
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'connected') return;
-
-          if (data.type === 'RACE_BROADCAST' && data.raceId === race.id) {
-            toast.success('レース結果が発表されました！');
-            await fetchResults();
-            setShowModal(true); // ブロードキャスト時は自動で開く
-            setConnectionStatus('DISCONNECTED');
-            router.refresh();
-          }
-        } catch (e) {
-          console.error('[SSE] Parse Error', e);
-        }
-      };
-
-      eventSource.onerror = (err) => {
-        console.error('[SSE] Error', err);
-        setConnectionStatus('DISCONNECTED');
-        eventSource?.close();
-        setTimeout(connectSSE, 5000);
-      };
-    };
-
-    const resetHeartbeat = () => {
-      clearTimeout(heartbeatTimeout);
-      heartbeatTimeout = setTimeout(() => {
-        setConnectionStatus('DISCONNECTED');
-        eventSource?.close();
-        connectSSE();
-      }, 40000);
-    };
-
-    connectSSE();
-
-    return () => {
-      eventSource?.close();
-      clearTimeout(heartbeatTimeout);
-    };
-  }, [race.id, initialIsFinalized, router, fetchResults]);
+  const { connectionStatus } = useRaceEvents({
+    raceId: race.id,
+    isFinalized: initialIsFinalized,
+    onRaceBroadcast: handleRaceBroadcast,
+  });
 
   return (
     <>

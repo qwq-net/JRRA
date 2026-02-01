@@ -3,6 +3,7 @@
 import { placeBet } from '@/features/betting/actions';
 import { calculateBetCount, getValidBetCombinations } from '@/features/betting/lib/calculations';
 import { getBetTypeColumnCount, getBetTypeColumnLabels } from '@/features/betting/model/bet-types';
+import { Button, Input } from '@/shared/ui';
 import { getBracketColor } from '@/shared/utils/bracket';
 import { getGenderAge, getGenderBadgeClass } from '@/shared/utils/gender';
 import { BET_TYPE_LABELS, BET_TYPES, BetType } from '@/types/betting';
@@ -190,16 +191,17 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
 
       <div className="flex flex-wrap gap-2 rounded-lg bg-gray-100 p-2">
         {BET_TYPE_ORDER.map((type) => (
-          <button
+          <Button
             key={type}
             type="button"
             onClick={() => handleBetTypeChange(type)}
+            variant={betType === type ? 'primary' : 'ghost'}
             className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-              betType === type ? 'bg-primary text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50'
+              betType === type ? 'shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
             {BET_TYPE_LABELS[type]}
-          </button>
+          </Button>
         ))}
         {timeLeft && (
           <div className="ml-auto flex items-center gap-2 px-3 text-sm font-black text-red-600">
@@ -314,14 +316,14 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
           </div>
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-500">1点あたり:</label>
-            <input
+            <Input
               type="number"
               min={100}
               step={100}
               value={amount}
               onChange={(e) => setAmount(parseInt(e.target.value, 10) || 100)}
               disabled={isClosed || isPending}
-              className="w-24 rounded-md border border-gray-300 px-3 py-2 text-right text-sm disabled:bg-gray-100"
+              className="w-24 text-right disabled:bg-gray-100"
             />
             <span className="text-sm text-gray-500">円</span>
           </div>
@@ -332,11 +334,11 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
         </div>
         <div className="flex items-center gap-4">
           <span className="text-xs text-gray-400">残高: {balance.toLocaleString()}円</span>
-          <button
+          <Button
             type="button"
             onClick={handleSubmit}
             disabled={isClosed || isPending || betCount === 0 || totalAmount > balance}
-            className="from-primary to-primary/80 hover:to-primary rounded-lg bg-linear-to-r px-8 py-3 font-bold text-white shadow-md transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-40 font-bold"
           >
             {isPending ? (
               <>
@@ -346,7 +348,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
             ) : (
               '購入確定'
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
