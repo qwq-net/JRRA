@@ -152,6 +152,9 @@ export const raceStatusEnum = pgEnum('race_status', ['SCHEDULED', 'CLOSED', 'FIN
 
 export const races = pgTable('race', {
   id: uuid('id').defaultRandom().primaryKey(),
+  eventId: uuid('eventId')
+    .notNull()
+    .references(() => events.id, { onDelete: 'cascade' }),
   date: date('date').notNull(),
   location: text('location').notNull(),
   name: text('name').notNull(),
@@ -236,9 +239,14 @@ export const walletRelations = relations(wallets, ({ one, many }) => ({
 
 export const eventRelations = relations(events, ({ many }) => ({
   wallets: many(wallets),
+  races: many(races),
 }));
 
-export const raceRelations = relations(races, ({ many }) => ({
+export const raceRelations = relations(races, ({ one, many }) => ({
+  event: one(events, {
+    fields: [races.eventId],
+    references: [events.id],
+  }),
   entries: many(raceEntries),
   bets: many(bets),
 }));

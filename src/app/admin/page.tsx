@@ -102,22 +102,6 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Link
-              href="/admin/events"
-              className="group flex items-center justify-between rounded-lg border border-gray-100 p-4 transition-all hover:border-gray-200 hover:bg-gray-50"
-            >
-              <div className="flex items-center gap-4">
-                <div className="bg-primary/10 text-primary group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="text-secondary font-bold">イベント管理</h4>
-                  <p className="text-xs text-gray-500">イベントの追加・編集・確定処理</p>
-                </div>
-              </div>
-              <ArrowRight className="group-hover:text-primary h-5 w-5 text-gray-300 transition-colors" />
-            </Link>
-
-            <Link
               href="/admin/users"
               className="group flex items-center justify-between rounded-lg border border-gray-100 p-4 transition-all hover:border-gray-200 hover:bg-gray-50"
             >
@@ -131,6 +115,22 @@ export default async function AdminPage() {
                 </div>
               </div>
               <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-blue-600" />
+            </Link>
+
+            <Link
+              href="/admin/events"
+              className="group flex items-center justify-between rounded-lg border border-gray-100 p-4 transition-all hover:border-gray-200 hover:bg-gray-50"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/10 text-primary group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-lg transition-colors group-hover:text-white">
+                  <Calendar className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-secondary font-bold">イベント管理</h4>
+                  <p className="text-xs text-gray-500">イベントの追加・編集・確定処理</p>
+                </div>
+              </div>
+              <ArrowRight className="group-hover:text-primary h-5 w-5 text-gray-300 transition-colors" />
             </Link>
 
             <Link

@@ -21,9 +21,10 @@ async function main() {
   const [race] = await db
     .insert(schema.races)
     .values({
-      name: '日本ダービー',
+      eventId: event.id,
+      name: '拠り所ダービー',
       location: '東京競馬場',
-      date: '2025-05-25',
+      date: '2026-01-30',
       distance: 2400,
       surface: '芝',
       condition: '良',

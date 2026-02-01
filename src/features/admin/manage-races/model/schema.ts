@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const raceSchema = z.object({
+  eventId: z.string().uuid(),
   date: z.string().min(1),
   location: z.string().min(1),
   name: z.string().min(1),

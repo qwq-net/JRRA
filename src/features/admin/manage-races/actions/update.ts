@@ -17,6 +17,7 @@ export async function updateRace(id: string, formData: FormData) {
   const closingAtValue = formData.get('closingAt');
 
   const parse = raceSchema.safeParse({
+    eventId: formData.get('eventId'),
     date: formData.get('date'),
     location: formData.get('location'),
     name: formData.get('name'),
@@ -33,6 +34,7 @@ export async function updateRace(id: string, formData: FormData) {
   await db
     .update(races)
     .set({
+      eventId: parse.data.eventId,
       date: parse.data.date,
       location: parse.data.location,
       name: parse.data.name,

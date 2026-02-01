@@ -4,7 +4,11 @@ import Link from 'next/link';
 import { getRaces } from '../actions';
 import { EditRaceDialog } from './edit-race-dialog';
 
-export async function RaceList() {
+interface RaceListProps {
+  events: Array<{ id: string; name: string; date: string }>;
+}
+
+export async function RaceList({ events }: RaceListProps) {
   const races = await getRaces();
 
   if (races.length === 0) {
@@ -17,13 +21,13 @@ export async function RaceList() {
         <thead className="bg-gray-50">
           <tr className="border-b border-gray-100">
             <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
-              開催日
-            </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
-              場所
+              イベント
             </th>
             <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               レース名
+            </th>
+            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+              場所
             </th>
             <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               距離
@@ -45,11 +49,9 @@ export async function RaceList() {
         <tbody className="divide-y divide-gray-200 bg-white">
           {races.map((race) => (
             <tr key={race.id} className="transition-colors hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                {race.date.replace(/-/g, '/')}
-              </td>
-              <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-500">{race.location}</td>
+              <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">{race.event.name}</td>
               <td className="px-6 py-4 text-sm font-black whitespace-nowrap text-gray-900">{race.name}</td>
+              <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-500">{race.location}</td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <Badge variant="surface" label={race.surface} />
                 <span className="ml-1.5 text-xs font-black text-gray-400">{race.distance}m</span>
@@ -76,6 +78,7 @@ export async function RaceList() {
                     <Eye className="h-4 w-4" />
                   </Link>
                   <EditRaceDialog
+                    events={events}
                     race={{
                       ...race,
                       surface: race.surface as '芝' | 'ダート',

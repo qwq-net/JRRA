@@ -1,8 +1,9 @@
-import { CreateRaceDialog, RaceList } from '@/features/admin/manage-races';
+import { CreateRaceDialog, getEvents, RaceList } from '@/features/admin/manage-races';
 import { Card } from '@/shared/ui';
 import { Suspense } from 'react';
 
-export default function RacesPage() {
+export default async function RacesPage() {
+  const events = await getEvents();
   return (
     <div className="space-y-6">
       <div>
@@ -13,11 +14,11 @@ export default function RacesPage() {
       <div className="space-y-4">
         <div className="flex items-end justify-between px-2">
           <h2 className="text-xl font-black text-gray-900">登録済みのレース</h2>
-          <CreateRaceDialog />
+          <CreateRaceDialog events={events} />
         </div>
 
         <Suspense fallback={<Card className="py-12 text-center text-gray-500">読み込み中...</Card>}>
-          <RaceList />
+          <RaceList events={events} />
         </Suspense>
       </div>
     </div>

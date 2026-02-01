@@ -6,7 +6,11 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { RaceForm } from './race-form';
 
-export function CreateRaceDialog() {
+interface CreateRaceDialogProps {
+  events: Array<{ id: string; name: string; date: string }>;
+}
+
+export function CreateRaceDialog({ events }: CreateRaceDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,7 +42,7 @@ export function CreateRaceDialog() {
           </div>
 
           <div className="mt-2">
-            <RaceForm showClosingAt={false} onSuccess={() => setOpen(false)} />
+            <RaceForm events={events} showClosingAt={false} onSuccess={() => setOpen(false)} />
           </div>
 
           <div className="mt-8 flex justify-center">

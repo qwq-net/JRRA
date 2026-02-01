@@ -8,6 +8,7 @@ import { createRace, updateRace } from '../actions';
 interface RaceFormProps {
   initialData?: {
     id: string;
+    eventId: string;
     date: string;
     location: string;
     name: string;
@@ -16,12 +17,14 @@ interface RaceFormProps {
     condition: '良' | '稍重' | '重' | '不良' | null;
     closingAt?: Date | string | null;
   };
+  events: Array<{ id: string; name: string; date: string }>;
   onSuccess?: () => void;
   showClosingAt?: boolean;
 }
 
-export function RaceForm({ initialData, onSuccess, showClosingAt = true }: RaceFormProps) {
+export function RaceForm({ initialData, events, onSuccess, showClosingAt = true }: RaceFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [eventId, setEventId] = useState(initialData?.eventId || events[0]?.id || '');
   const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
   const [surface, setSurface] = useState(initialData?.surface || '芝');
   const [condition, setCondition] = useState(initialData?.condition || '良');
@@ -37,6 +40,7 @@ export function RaceForm({ initialData, onSuccess, showClosingAt = true }: RaceF
       } else {
         await createRace(formData);
         formRef.current?.reset();
+        setEventId(events[0]?.id || '');
         setDate(new Date().toISOString().split('T')[0]);
         setSurface('芝');
         setCondition('良');
@@ -51,6 +55,23 @@ export function RaceForm({ initialData, onSuccess, showClosingAt = true }: RaceF
 
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-5">
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-gray-700">イベント</label>
+        <select
+          name="eventId"
+          required
+          value={eventId}
+          onChange={(e) => setEventId(e.target.value)}
+          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
+        >
+          {events.map((event) => (
+            <option key={event.id} value={event.id}>
+              {event.date} - {event.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-gray-700">開催日</label>

@@ -8,6 +8,7 @@ import { RaceForm } from './race-form';
 interface EditRaceDialogProps {
   race: {
     id: string;
+    eventId: string;
     date: string;
     location: string;
     name: string;
@@ -16,9 +17,10 @@ interface EditRaceDialogProps {
     condition: '良' | '稍重' | '重' | '不良' | null;
     closingAt: Date | string | null;
   };
+  events: Array<{ id: string; name: string; date: string }>;
 }
 
-export function EditRaceDialog({ race }: EditRaceDialogProps) {
+export function EditRaceDialog({ race, events }: EditRaceDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,7 +46,7 @@ export function EditRaceDialog({ race }: EditRaceDialogProps) {
           </div>
 
           <div className="mt-2">
-            <RaceForm initialData={race} onSuccess={() => setOpen(false)} />
+            <RaceForm events={events} initialData={race} onSuccess={() => setOpen(false)} />
           </div>
 
           <div className="mt-4 flex justify-end">

@@ -51,6 +51,7 @@ describe('updateRace', () => {
     (auth as unknown as Mock).mockResolvedValue({ user: { role: 'ADMIN' } });
 
     const formData = new FormData();
+    formData.append('eventId', '550e8400-e29b-41d4-a716-446655440000');
     formData.append('date', '2024-01-02');
     formData.append('location', 'Kyoto');
     formData.append('name', 'Kyoto Cup');
@@ -63,6 +64,7 @@ describe('updateRace', () => {
     expect(mockUpdate).toHaveBeenCalled();
     expect(mockSet).toHaveBeenCalledWith(
       expect.objectContaining({
+        eventId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'Kyoto Cup',
         distance: 1600,
       })
