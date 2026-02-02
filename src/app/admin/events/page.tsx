@@ -18,13 +18,13 @@ export default async function AdminEventsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-gray-900">イベント管理</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">イベント管理</h1>
         <p className="mt-1 text-sm font-medium text-gray-500">イベントの作成・ステータス管理を行います</p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-end justify-between px-2">
-          <h2 className="text-xl font-black text-gray-900">すべてのイベント</h2>
+          <h2 className="text-xl font-semibold text-gray-900">すべてのイベント</h2>
           <CreateEventDialog />
         </div>
 

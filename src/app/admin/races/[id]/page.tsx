@@ -49,7 +49,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
           <ChevronLeft className="h-5 w-5 text-gray-600" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">{race.name}</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">{race.name}</h1>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <p>
               {race.date.replace(/-/g, '/')} @ {race.location}
@@ -67,7 +67,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
                     <Trophy className="h-4 w-4" />
                   </div>
-                  <h2 className="text-xl font-black text-gray-900">確定済み結果</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">確定済み結果</h2>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
@@ -79,7 +79,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                     >
                       <div
                         className={cn(
-                          'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-xl font-black transition-colors',
+                          'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-xl font-semibold transition-colors',
                           index === 0
                             ? 'border-amber-200 bg-amber-100 text-amber-700'
                             : index === 1
@@ -95,19 +95,19 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                       <div className="flex items-center gap-3">
                         <span
                           className={cn(
-                            'flex h-7 w-7 items-center justify-center rounded text-sm font-bold ring-1 ring-black/5',
+                            'flex h-7 w-7 items-center justify-center rounded text-sm font-semibold ring-1 ring-black/5',
                             getBracketColor(entry.bracketNumber)
                           )}
                         >
                           {entry.bracketNumber || '?'}
                         </span>
-                        <span className="text-primary bg-primary/10 ring-primary/10 flex h-7 w-7 items-center justify-center rounded text-sm font-bold ring-1">
+                        <span className="text-primary bg-primary/10 ring-primary/10 flex h-7 w-7 items-center justify-center rounded text-sm font-semibold ring-1">
                           {entry.horseNumber || '?'}
                         </span>
                       </div>
 
                       <div className="flex-1">
-                        <span className="text-base font-bold text-gray-900">{entry.horseName}</span>
+                        <span className="text-base font-semibold text-gray-900">{entry.horseName}</span>
                       </div>
                     </div>
                   ))}
@@ -146,10 +146,10 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                     <Info className="h-8 w-8" />
                   </div>
                 </div>
-                <h3 className="mb-2 text-lg font-bold text-gray-900">出走馬が登録されていません</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">出走馬が登録されていません</h3>
                 <p className="text-sm text-gray-500">レース結果を確定するには、まず出走馬を登録する必要があります。</p>
                 <Link href="/admin/entries" className="mt-6 inline-block">
-                  <Button variant="outline" className="font-bold">
+                  <Button variant="outline" className="font-semibold">
                     出走馬を登録する
                   </Button>
                 </Link>
@@ -163,7 +163,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
             <Card className="border-none shadow-sm">
               <CardHeader className="flex flex-row items-center gap-2 border-b border-gray-50 pb-4">
                 <Settings2 className="h-4 w-4 text-gray-400" />
-                <h2 className="text-sm font-bold text-gray-900">レース情報</h2>
+                <h2 className="text-sm font-semibold text-gray-900">レース情報</h2>
               </CardHeader>
               <CardContent className="space-y-4 pt-6 text-sm">
                 <div className="flex items-center justify-between border-b border-gray-50 pb-2">
@@ -174,7 +174,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                   <span className="font-medium text-gray-500">コース</span>
                   <div className="flex items-center gap-2">
                     <Badge variant="surface" label={race.surface} />
-                    <span className="font-bold text-gray-900">{race.distance}m</span>
+                    <span className="font-semibold text-gray-900">{race.distance}m</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between border-b border-gray-50 pb-2">
@@ -183,7 +183,7 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                 </div>
                 <div className="flex items-center justify-between border-b border-gray-50 pb-2">
                   <span className="font-medium text-gray-500">確定日時</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-semibold text-gray-900">
                     {race.finalizedAt ? (
                       <FormattedDate
                         date={race.finalizedAt}

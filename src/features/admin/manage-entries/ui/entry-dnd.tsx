@@ -75,11 +75,11 @@ function SortableEntry({
         <GripVertical className="h-4 w-4" />
       </button>
       <span
-        className={`flex h-6 w-6 items-center justify-center rounded text-sm font-bold ${getBracketColor(bracketNumber)}`}
+        className={`flex h-6 w-6 items-center justify-center rounded text-sm font-semibold ${getBracketColor(bracketNumber)}`}
       >
         {bracketNumber || '?'}
       </span>
-      <span className="text-primary bg-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold">
+      <span className="text-primary bg-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-semibold">
         {horseNumber}
       </span>
       <span className="flex-1 font-medium text-gray-900">{horse.name}</span>

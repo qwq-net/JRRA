@@ -27,14 +27,14 @@ export async function UserList({ users }: UserListProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-gray-50 text-gray-400">
-          <tr className="border-b border-gray-200">
-            <th className="px-6 py-3 font-medium tracking-wider uppercase">User</th>
-            <th className="px-6 py-3 font-medium tracking-wider uppercase">ID</th>
-            <th className="px-6 py-3 font-medium tracking-wider uppercase">登録元</th>
-            <th className="px-6 py-3 font-medium tracking-wider uppercase">役割</th>
-            <th className="px-6 py-3 font-medium tracking-wider uppercase">操作</th>
+      <table className="w-full min-w-[800px] border-collapse text-left text-sm">
+        <thead className="bg-gray-50">
+          <tr className="border-b border-gray-100">
+            <th className="px-6 py-4 font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">User</th>
+            <th className="px-6 py-4 font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">ID</th>
+            <th className="px-6 py-4 font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">登録元</th>
+            <th className="px-6 py-4 font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">役割</th>
+            <th className="px-6 py-4 font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">操作</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white">
@@ -57,7 +57,7 @@ export async function UserList({ users }: UserListProps) {
                       className="rounded-full shadow-sm ring-1 ring-gray-200"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-bold text-gray-400">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-semibold text-gray-400">
                       ?
                     </div>
                   )}

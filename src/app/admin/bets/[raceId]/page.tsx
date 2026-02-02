@@ -29,7 +29,7 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
           <ArrowLeft className="h-4 w-4" />
           馬券管理に戻る
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">{race.name}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{race.name}</h1>
         <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
           <span>{race.event.name}</span>
           <span>•</span>
@@ -49,22 +49,22 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
             <table className="w-full min-w-[800px] border-collapse">
               <thead className="bg-gray-50">
                 <tr className="border-b border-gray-100">
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     ユーザー
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     券種
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     選択馬
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     金額
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     購入日時
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-semibold tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     状態
                   </th>
                 </tr>
@@ -81,7 +81,7 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
                     <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900">
                       {JSON.stringify((bet.details as { selections?: unknown })?.selections || [])}
                     </td>
-                    <td className="px-6 py-4 text-sm font-bold whitespace-nowrap text-gray-900">
+                    <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900">
                       {bet.amount.toLocaleString()}円
                     </td>
                     <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
@@ -110,17 +110,17 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-sm text-gray-500">総馬券数</div>
-            <div className="mt-1 text-2xl font-bold text-gray-900">{bets.length}枚</div>
+            <div className="mt-1 text-2xl font-semibold text-gray-900">{bets.length}枚</div>
           </div>
           <div>
             <div className="text-sm text-gray-500">総投票額</div>
-            <div className="mt-1 text-2xl font-bold text-gray-900">
+            <div className="mt-1 text-2xl font-semibold text-gray-900">
               {bets.reduce((sum, bet) => sum + bet.amount, 0).toLocaleString()}円
             </div>
           </div>
           <div>
             <div className="text-sm text-gray-500">的中馬券数</div>
-            <div className="mt-1 text-2xl font-bold text-gray-900">
+            <div className="mt-1 text-2xl font-semibold text-gray-900">
               {bets.filter((bet) => bet.status === 'HIT').length}枚
             </div>
           </div>

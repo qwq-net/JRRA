@@ -41,7 +41,7 @@ export function DeleteHorseButton({ horseId, horseName }: DeleteHorseButtonProps
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/50 duration-200" />
         <AlertDialog.Content className="animate-in zoom-in-95 fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl duration-200">
-          <AlertDialog.Title className="text-xl font-bold text-gray-900">馬の削除</AlertDialog.Title>
+          <AlertDialog.Title className="text-xl font-semibold text-gray-900">馬の削除</AlertDialog.Title>
           <AlertDialog.Description className="mt-2 text-sm text-gray-600">
             本当に「{horseName}」を削除してもよろしいですか？この操作は取り消せません。
           </AlertDialog.Description>

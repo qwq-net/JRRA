@@ -90,7 +90,7 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
     >
       <div
         className={cn(
-          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black transition-colors',
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-semibold transition-colors',
           rankStyle
         )}
       >
@@ -104,19 +104,19 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
       <div className="flex items-center gap-2">
         <span
           className={cn(
-            'flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1 ring-black/5',
+            'flex h-6 w-6 items-center justify-center rounded text-sm font-semibold ring-1 ring-black/5',
             getBracketColor(entry.bracketNumber)
           )}
         >
           {entry.bracketNumber || '?'}
         </span>
-        <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1">
+        <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-semibold ring-1">
           {entry.horseNumber || '?'}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col truncate">
-        <span className="truncate text-sm font-bold text-gray-900">{entry.horseName}</span>
+        <span className="truncate text-sm font-semibold text-gray-900">{entry.horseName}</span>
       </div>
     </div>
   );
@@ -243,7 +243,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
       <div className="space-y-4 lg:col-span-2">
         <div className="flex items-end justify-between px-1">
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-black text-gray-900">着順を確定する</h2>
+            <h2 className="text-xl font-semibold text-gray-900">着順を確定する</h2>
             <div className="mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-gray-400">
               <Info className="h-4 w-4" />
               ドラッグして着順を並び替えてください
@@ -252,7 +252,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
           {isChanged && (
             <button
               onClick={handleReset}
-              className="hover:text-primary mb-0.5 flex items-center gap-1.5 text-sm font-bold text-gray-400 transition-colors"
+              className="hover:text-primary mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-gray-400 transition-colors"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               リセット
@@ -281,7 +281,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                 <div className="border-primary ring-primary/10 flex scale-105 items-center gap-3 rounded-xl border-2 bg-white p-2 shadow-xl ring-4">
                   <div
                     className={cn(
-                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-black',
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-lg font-semibold',
                       getRankStyles(activePosition)
                     )}
                   >
@@ -291,17 +291,17 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        'flex h-6 w-6 items-center justify-center rounded text-sm font-bold',
+                        'flex h-6 w-6 items-center justify-center rounded text-sm font-semibold',
                         getBracketColor(activeEntry.bracketNumber)
                       )}
                     >
                       {activeEntry.bracketNumber || '?'}
                     </span>
-                    <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1">
+                    <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-semibold ring-1">
                       {activeEntry.horseNumber || '?'}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">{activeEntry.horseName}</span>
+                  <span className="text-sm font-semibold text-gray-900">{activeEntry.horseName}</span>
                 </div>
               )}
             </DragOverlay>
@@ -309,7 +309,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center text-gray-400">
             <Settings2 className="mb-4 h-12 w-12 opacity-20" />
-            <p className="text-sm font-bold">
+            <p className="text-sm font-semibold">
               受付が終了すると着順の操作が可能になります。
               <br />
               締切時刻を待つか、「手動締切」を行ってください。
@@ -331,7 +331,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
           <div className="mb-6 space-y-4 text-sm">
             <div className="flex items-center gap-2 border-b border-gray-50 pb-4">
               <Settings2 className="h-4 w-4 text-gray-400" />
-              <h4 className="font-bold text-gray-900">レース情報</h4>
+              <h4 className="font-semibold text-gray-900">レース情報</h4>
             </div>
             <div className="flex items-center justify-between border-b border-gray-50 pb-2">
               <span className="font-medium text-gray-500">ステータス</span>
@@ -343,7 +343,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <div className="flex items-center justify-between">
                 <span className="font-medium text-gray-500">受付終了予定</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-sm font-semibold text-gray-900">
                     {race.closingAt ? (
                       <FormattedDate
                         date={race.closingAt}
@@ -365,7 +365,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <span className="font-medium text-gray-500">コース</span>
               <div>
                 <Badge variant="surface" label={race.surface} />
-                <span className="ml-1 text-sm font-bold text-gray-400">{race.distance}m</span>
+                <span className="ml-1 text-sm font-semibold text-gray-400">{race.distance}m</span>
               </div>
             </div>
             <div className="flex items-center justify-between pb-2">
@@ -377,12 +377,12 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
           <div className="space-y-4">
             <div className="flex items-center gap-2 border-b border-gray-50 pb-4">
               <Coins className="h-4 w-4 text-amber-500" />
-              <h4 className="font-bold text-gray-900">配当設定</h4>
+              <h4 className="font-semibold text-gray-900">配当設定</h4>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-sm font-bold text-gray-500">配当方式</Label>
+                <Label className="text-sm font-semibold text-gray-500">配当方式</Label>
                 <Select
                   value={takeoutRate === 0 ? 'TOTAL' : 'STANDARD'}
                   onValueChange={(v: string) => setTakeoutRate(v === 'TOTAL' ? 0 : 30)}
@@ -407,7 +407,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
             {race.status === 'SCHEDULED' && (
               <Button
                 variant="outline"
-                className="w-full py-6 text-sm font-bold"
+                className="w-full py-6 text-sm font-semibold"
                 onClick={handleManualClose}
                 disabled={isPending}
               >
@@ -419,7 +419,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <div className="space-y-3">
                 <Button
                   variant="outline"
-                  className="w-full border-blue-100 py-4 text-sm font-bold text-blue-600 hover:bg-blue-50"
+                  className="w-full border-blue-100 py-4 text-sm font-semibold text-blue-600 hover:bg-blue-50"
                   onClick={handleReopen}
                   disabled={isPending || hasPayoutResults}
                 >
@@ -431,7 +431,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                   <AlertDialog.Trigger asChild>
                     <Button
                       className={cn(
-                        'shadow-primary/20 relative w-full py-6 text-lg font-black shadow-lg transition-all duration-300 active:scale-[0.98]',
+                        'shadow-primary/20 relative w-full py-6 text-lg font-semibold shadow-lg transition-all duration-300 active:scale-[0.98]',
                         isChanged ? 'from-primary to-primary/80 bg-linear-to-br' : 'grayscale-50'
                       )}
                       disabled={isPending || isPayoutMoving || hasPayoutResults}
@@ -449,18 +449,18 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500">
                           <AlertCircle className="h-8 w-8" />
                         </div>
-                        <AlertDialog.Title className="mb-2 text-xl font-bold text-gray-900">
+                        <AlertDialog.Title className="mb-2 text-xl font-semibold text-gray-900">
                           着順を確定しますか？
                         </AlertDialog.Title>
                         <AlertDialog.Description asChild className="text-sm text-gray-500">
                           <div>
                             この操作を行うと、投票された馬券の払い戻し計算が
-                            <span className="mx-1 font-bold text-gray-900 underline">
+                            <span className="mx-1 font-semibold text-gray-900 underline">
                               {takeoutRate === 0 ? '全額配分' : `控除率 ${takeoutRate}%`}
                             </span>
                             で実行されます。
                             <br />
-                            <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4 font-bold text-gray-900">
+                            <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/50 p-4 font-semibold text-gray-900">
                               <div className="flex justify-between border-b border-gray-100 pb-1">
                                 <span className="text-amber-600">1着</span>
                                 <span>{sortedEntries[0]?.horseName}</span>
@@ -479,12 +479,12 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                       </div>
                       <div className="mt-8 flex flex-col gap-3">
                         <AlertDialog.Action asChild>
-                          <Button onClick={handleSubmit} className="w-full py-5 text-lg font-bold">
+                          <Button onClick={handleSubmit} className="w-full py-5 text-lg font-semibold">
                             確定する
                           </Button>
                         </AlertDialog.Action>
                         <AlertDialog.Cancel asChild>
-                          <Button variant="outline" className="w-full py-5 text-lg font-bold">
+                          <Button variant="outline" className="w-full py-5 text-lg font-semibold">
                             キャンセル
                           </Button>
                         </AlertDialog.Cancel>
@@ -498,7 +498,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
             {hasPayoutResults && (
               <div className="space-y-3">
                 <Button
-                  className="relative w-full border-2 border-amber-500 bg-white py-6 text-lg font-black text-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-50"
+                  className="relative w-full border-2 border-amber-500 bg-white py-6 text-lg font-semibold text-amber-600 shadow-lg shadow-amber-200 hover:bg-amber-50"
                   onClick={handlePayoutFinalize}
                   disabled={isPayoutMoving || isPending}
                 >
@@ -506,7 +506,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full text-sm font-bold text-gray-400 hover:text-red-500"
+                  className="w-full text-sm font-semibold text-gray-400 hover:text-red-500"
                   onClick={handleServerReset}
                   disabled={isPayoutMoving || isPending}
                 >

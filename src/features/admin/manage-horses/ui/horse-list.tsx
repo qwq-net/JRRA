@@ -21,22 +21,22 @@ export async function HorseList() {
       <table className="w-full min-w-[700px] border-collapse">
         <thead className="bg-gray-50">
           <tr className="border-b border-gray-100">
-            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               馬名
             </th>
-            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               産地
             </th>
-            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               性別
             </th>
-            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               年齢
             </th>
-            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               備考
             </th>
-            <th className="w-32 px-6 py-4 text-right text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="w-32 px-6 py-4 text-right text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
               操作
             </th>
           </tr>
@@ -44,20 +44,20 @@ export async function HorseList() {
         <tbody className="divide-y divide-gray-200 bg-white">
           {horses.map((horse) => (
             <tr key={horse.id} className="transition-colors hover:bg-gray-50">
-              <td className="px-6 py-4 text-sm font-black whitespace-nowrap text-gray-900">{horse.name}</td>
+              <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900">{horse.name}</td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
-                <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-sm font-bold text-gray-700">
+                <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-sm font-semibold text-gray-700">
                   {originLabels[horse.origin] || '不明'}
                 </span>
               </td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <span
-                  className={`inline-flex rounded-full px-2 py-0.5 text-sm font-bold ${getGenderBadgeClass(horse.gender)}`}
+                  className={`inline-flex rounded-full px-2 py-0.5 text-sm font-semibold ${getGenderBadgeClass(horse.gender)}`}
                 >
                   {getDisplayGender(horse.gender)}
                 </span>
               </td>
-              <td className="px-6 py-4 text-sm font-bold whitespace-nowrap text-gray-600">
+              <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-600">
                 {horse.age ? `${horse.age}歳` : '-'}
               </td>
               <td

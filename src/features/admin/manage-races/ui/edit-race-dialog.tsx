@@ -35,7 +35,7 @@ export function EditRaceDialog({ race, events }: EditRaceDialogProps) {
         <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/50 duration-200" />
         <AlertDialog.Content className="animate-in zoom-in-95 fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl duration-200">
           <div className="mb-4 flex items-center justify-between">
-            <AlertDialog.Title className="text-xl font-bold text-gray-900">レース情報の編集</AlertDialog.Title>
+            <AlertDialog.Title className="text-xl font-semibold text-gray-900">レース情報の編集</AlertDialog.Title>
             <AlertDialog.Cancel asChild>
               <button className="text-gray-400 hover:text-gray-600">
                 <span className="sr-only">閉じる</span>

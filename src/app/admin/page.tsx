@@ -76,7 +76,7 @@ export default async function AdminPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <div>
-        <h1 className="text-secondary text-3xl font-bold">ダッシュボード</h1>
+        <h1 className="text-secondary text-2xl font-semibold">ダッシュボード</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -88,7 +88,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">{stat.label}</p>
-                <h3 className="text-secondary text-lg font-bold">{stat.value}</h3>
+                <h3 className="text-secondary text-lg font-semibold">{stat.value}</h3>
               </div>
             </CardContent>
           </Card>
@@ -97,7 +97,7 @@ export default async function AdminPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-secondary text-xl font-bold">クイックアクション</h2>
+          <h2 className="text-secondary text-xl font-semibold">クイックアクション</h2>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Link
@@ -109,7 +109,7 @@ export default async function AdminPage() {
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">ユーザー管理</h4>
+                <h4 className="text-secondary font-semibold">ユーザー管理</h4>
                 <p className="text-sm text-gray-500">ユーザー一覧の確認と権限変更</p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default async function AdminPage() {
                 <Calendar className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">イベント管理</h4>
+                <h4 className="text-secondary font-semibold">イベント管理</h4>
                 <p className="text-sm text-gray-500">イベントの追加・編集・確定処理</p>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default async function AdminPage() {
                 <Carrot className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">馬管理</h4>
+                <h4 className="text-secondary font-semibold">馬管理</h4>
                 <p className="text-sm text-gray-500">競走馬の新規登録と情報管理</p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default async function AdminPage() {
                 <Trophy className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">レース管理</h4>
+                <h4 className="text-secondary font-semibold">レース管理</h4>
                 <p className="text-sm text-gray-500">レースの作成・管理</p>
               </div>
             </div>
@@ -173,7 +173,7 @@ export default async function AdminPage() {
                 <ClipboardList className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">出走馬管理</h4>
+                <h4 className="text-secondary font-semibold">出走馬管理</h4>
                 <p className="text-sm text-gray-500">レースへの競走馬の割り当て</p>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default async function AdminPage() {
                 <Ticket className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-secondary font-bold">馬券管理</h4>
+                <h4 className="text-secondary font-semibold">馬券管理</h4>
                 <p className="text-sm text-gray-500">購入された馬券の確認と管理</p>
               </div>
             </div>

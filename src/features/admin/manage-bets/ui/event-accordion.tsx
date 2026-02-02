@@ -32,7 +32,7 @@ export function EventAccordion({ events }: EventAccordionProps) {
           <Accordion.Trigger className="group flex w-full items-center justify-between bg-gray-50 px-6 py-4 text-left transition-colors hover:bg-gray-100">
             <div className="flex flex-1 items-center gap-8">
               <div className="min-w-[300px]">
-                <span className="text-sm font-black text-gray-900">{event.name}</span>
+                <span className="text-sm font-semibold text-gray-900">{event.name}</span>
               </div>
               <div className="min-w-[120px]">
                 <span className="text-sm text-gray-500">{event.date}</span>

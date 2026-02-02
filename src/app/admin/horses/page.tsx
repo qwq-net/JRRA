@@ -6,17 +6,17 @@ export default function HorsesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-gray-900">馬管理</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">馬管理</h1>
         <p className="mt-1 text-sm font-medium text-gray-500">競走馬の登録・管理を行います</p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-end justify-between px-2">
-          <h2 className="text-xl font-black text-gray-900">登録済みの馬</h2>
+          <h2 className="text-xl font-semibold text-gray-900">登録済みの馬</h2>
           <CreateHorseDialog />
         </div>
 
-        <Suspense fallback={<Card className="py-12 text-center font-bold text-gray-500">読み込み中...</Card>}>
+        <Suspense fallback={<Card className="py-12 text-center font-semibold text-gray-500">読み込み中...</Card>}>
           <HorseList />
         </Suspense>
       </div>

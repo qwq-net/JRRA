@@ -13,7 +13,7 @@ export default function EntriesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">出走馬管理</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">出走馬管理</h1>
         <p className="mt-1 text-sm text-gray-500">レースを選択して出走馬を登録します</p>
       </div>
 

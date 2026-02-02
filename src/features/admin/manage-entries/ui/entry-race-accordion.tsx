@@ -65,7 +65,7 @@ export function EntryRaceAccordion({ events }: EntryRaceAccordionProps) {
             <div className="flex items-center gap-4">
               <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-data-[state=open]:rotate-180" />
               <div>
-                <h3 className="text-lg font-bold text-gray-900">{event.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{event.name}</h3>
                 <p className="text-sm text-gray-500">{event.date.replace(/-/g, '/')}</p>
               </div>
             </div>
@@ -87,9 +87,9 @@ export function EntryRaceAccordion({ events }: EntryRaceAccordionProps) {
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-primary flex items-center gap-2 font-bold">
+                        <div className="text-primary flex items-center gap-2 font-semibold">
                           {race.raceNumber ? (
-                            <span className="text-sm font-black tracking-tighter text-gray-400 uppercase">
+                            <span className="text-sm font-semibold tracking-tighter text-gray-400 uppercase">
                               {race.raceNumber}R
                             </span>
                           ) : null}

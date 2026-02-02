@@ -69,7 +69,7 @@ export function RaceAccordion({ events, allEvents }: RaceAccordionProps) {
             <div className="flex items-center gap-4">
               <ChevronDown className="h-5 w-5 text-gray-400 transition-transform group-data-[state=open]:rotate-180" />
               <div>
-                <h3 className="text-lg font-bold text-gray-900">{event.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{event.name}</h3>
                 <p className="text-sm text-gray-500">{event.date}</p>
               </div>
             </div>
@@ -84,25 +84,25 @@ export function RaceAccordion({ events, allEvents }: RaceAccordionProps) {
                 <table className="w-full min-w-[800px] border-collapse">
                   <thead className="bg-gray-50">
                     <tr className="border-b border-gray-100">
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         番号
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         レース名
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         場所
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         距離
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         馬場
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         状態
                       </th>
-                      <th className="w-24 px-6 py-3 text-right text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="w-24 px-6 py-3 text-right text-sm font-medium tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         操作
                       </th>
                     </tr>

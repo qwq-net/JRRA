@@ -14,8 +14,8 @@ export default async function AdminUsersPage() {
   return (
     <div className="w-full max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-secondary text-3xl font-bold">User Management</h1>
-        <div className="text-sm text-gray-500">Total Users: {allUsers.length}</div>
+        <h1 className="text-2xl font-semibold text-gray-900">ユーザー管理</h1>
+        <div className="text-sm text-gray-500">総ユーザー数: {allUsers.length}</div>
       </div>
 
       <Card className="overflow-hidden border border-gray-200 shadow-sm">

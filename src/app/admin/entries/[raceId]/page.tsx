@@ -28,7 +28,7 @@ export default async function RaceEntryPage({ params }: Props) {
           <ArrowLeft className="h-5 w-5 text-gray-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{race.name}</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">{race.name}</h1>
           <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
