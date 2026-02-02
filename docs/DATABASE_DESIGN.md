@@ -124,15 +124,17 @@
 | カラム名 | 型 | 必須 | 説明 |
 | :--- | :--- | :--- | :--- |
 | `id` | UUID | Yes | 主キー |
+| `eventId` | UUID | Yes | `event.id` への外部キー |
 | `date` | Date | Yes | 開催日 |
 | `location` | Text | Yes | 競馬場名 (例: 東京) |
 | `raceNumber` | Integer | Yes | レース番号 (1-12) |
 | `name` | Text | Yes | レース名 (例: "ジャパンカップ") |
 | `startTime` | Timestamp | Yes | 発走時刻 |
+| `closingAt` | Timestamp | No | 投票締切時刻（キッチンタイマー用） |
 | `distance` | Integer | Yes | 距離 (メートル) |
 | `surface` | Text | Yes | コース種別 (芝/ダート) |
 | `condition` | Text | No | 馬場状態 (良/稍重/重/不良) |
-| `status` | Enum | Yes | 状態 ('SCHEDULED', 'CLOSED', 'FINALIZED', 'CANCELLED')。'FINALIZED' で払い戻し確定。 |
+| `status` | Enum | Yes | 状態 ('SCHEDULED', 'CLOSED', 'FINALIZED', 'CANCELLED')。'SCHEDULED' へ戻すことで受付再開が可能。 |
 | `finalizedAt` | Timestamp | No | 払い戻し確定日時 |
 | `createdAt` | Timestamp | Yes | 作成日時 |
 

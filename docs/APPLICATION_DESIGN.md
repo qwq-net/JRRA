@@ -79,3 +79,16 @@ src/shared/ui/button.tsx (Shared)
 
 このように、常に **App -> Feature -> Shared** という一方向の流れを守ることで、コードがスパゲッティ化するのを防ぎます。
 仮に `src/shared` から `src/features` をimportしようとすると、それはアーキテクチャ違反（循環参照の元）となります。
+
+---
+
+## テクニカル・ディテール
+
+### Server-Sent Events (SSE) によるリアルタイム同期
+
+管理画面でのアクションを即座にユーザー画面へ反映させるため、以下のイベントを配信しています。
+
+- `RACE_CLOSED`: レースの受付終了（購入ボタンの無効化）
+- `RACE_REOPENED`: レースの受付再開（購入ボタンの再有効化）
+- `RACE_FINALIZED`: 配当の確定（結果表示の準備完了）
+- `RACE_BROADCAST`: 全ユーザーへの結果発表（自動ポップアップ表示）
