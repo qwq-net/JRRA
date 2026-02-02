@@ -3,8 +3,7 @@
 import { useRaceEvents } from '@/features/betting/lib/hooks/use-race-events';
 import { PayoutResult, useRaceResults } from '@/features/betting/lib/hooks/use-race-results';
 import { PayoutResultModal } from '@/features/betting/ui/payout-result-modal';
-import { FormattedDate } from '@/shared/ui/formatted-date';
-import { AlarmClock, Loader2, WifiOff } from 'lucide-react';
+import { Loader2, WifiOff } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 interface StandbyClientProps {
@@ -56,12 +55,6 @@ export function StandbyClient({
             </span>
             <span className="text-sm font-medium text-gray-400">
               {race.location} {race.name}
-              {race.closingAt && (
-                <span className="ml-3 inline-flex items-center gap-1 font-bold text-red-500/80">
-                  <AlarmClock className="h-3.5 w-3.5" />
-                  締切: <FormattedDate date={race.closingAt} options={{ hour: '2-digit', minute: '2-digit' }} />
-                </span>
-              )}
             </span>
           </div>
           <h1 className="text-2xl font-black text-gray-900">

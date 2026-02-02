@@ -24,7 +24,7 @@ interface RaceFormProps {
   showClosingAt?: boolean;
 }
 
-export function RaceForm({ initialData, events, onSuccess, showClosingAt = true }: RaceFormProps) {
+export function RaceForm({ initialData, events, onSuccess, showClosingAt = false }: RaceFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [eventId, setEventId] = useState(initialData?.eventId || events[0]?.id || '');
   const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);

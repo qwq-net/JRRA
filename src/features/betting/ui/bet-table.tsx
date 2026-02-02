@@ -50,7 +50,6 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
   const [amount, setAmount] = useState<number>(100);
   const [isClosed, setIsClosed] = useState(initialStatus !== 'SCHEDULED');
   const [showKeypad, setShowKeypad] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<string | null>(null);
 
   useEffect(() => {
     if (!closingAt || isClosed) return;
@@ -62,11 +61,6 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
 
       if (diff <= 0) {
         setIsClosed(true);
-        setTimeLeft('受付終了');
-      } else {
-        const minutes = Math.floor(diff / 1000 / 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        setTimeLeft(`締切まで ${minutes}分${seconds}秒`);
       }
     };
 
@@ -209,15 +203,6 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
             {BET_TYPE_LABELS[type]}
           </Button>
         ))}
-        {timeLeft && (
-          <div className="ml-auto flex items-center gap-2 px-3 text-sm font-black text-red-600">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500"></span>
-            </span>
-            {timeLeft}
-          </div>
-        )}
       </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200">

@@ -3,8 +3,7 @@ import { BetTable } from '@/features/betting/ui/bet-table';
 import { getEventWallets } from '@/features/economy/wallet';
 import { auth } from '@/shared/config/auth';
 import { Button, Card, CardContent } from '@/shared/ui';
-import { FormattedDate } from '@/shared/ui/formatted-date';
-import { AlarmClock, ChevronLeft, Info } from 'lucide-react';
+import { ChevronLeft, Info } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
@@ -65,14 +64,6 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
             </span>
             <span className="text-sm font-medium text-gray-400">{race.date}</span>
           </div>
-          {race.closingAt && (
-            <div className="flex items-center gap-1.5 text-sm font-bold text-red-600">
-              <AlarmClock className="h-4 w-4" />
-              <span>
-                締切: <FormattedDate date={race.closingAt} options={{ hour: '2-digit', minute: '2-digit' }} />
-              </span>
-            </div>
-          )}
         </div>
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-3xl font-black text-gray-900">{race.name}</h1>

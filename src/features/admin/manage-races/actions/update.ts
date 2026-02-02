@@ -84,3 +84,18 @@ export async function closeRace(raceId: string) {
   revalidatePath(`/races/${raceId}`);
   return { success: true };
 }
+
+export async function setClosingTime(raceId: string, minutes: number) {
+  const session = await auth();
+  if (session?.user?.role !== 'ADMIN') throw new Error('Unauthorized');
+
+  const closingAt = new Date(Date.now() + minutes * 60 * 1000);
+
+  await db.update(races).set({ closingAt, status: 'SCHEDULED' }).where(eq(races.id, raceId));
+
+  revalidatePath('/admin/races');
+  revalidatePath(`/admin/races/${raceId}`);
+  revalidatePath(`/races/${raceId}`);
+
+  return { success: true, closingAt };
+}
