@@ -76,7 +76,7 @@ export function TransactionHistoryDialog({ walletId, eventName, open, onOpenChan
           <div className="flex items-center justify-between rounded-t-lg border-b bg-white p-4">
             <div>
               <AlertDialog.Title className="text-lg font-bold text-gray-900">取引履歴</AlertDialog.Title>
-              <AlertDialog.Description className="text-xs text-gray-500">{eventName}</AlertDialog.Description>
+              <AlertDialog.Description className="text-sm text-gray-500">{eventName}</AlertDialog.Description>
             </div>
             <AlertDialog.Cancel asChild>
               <button className="text-gray-400 hover:text-gray-600">

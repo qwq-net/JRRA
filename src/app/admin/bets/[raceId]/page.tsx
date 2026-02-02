@@ -49,22 +49,22 @@ export default async function BetDetailPage({ params }: BetDetailPageProps) {
             <table className="w-full min-w-[800px] border-collapse">
               <thead className="bg-gray-50">
                 <tr className="border-b border-gray-100">
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     ユーザー
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     券種
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     選択馬
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     金額
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     購入日時
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                  <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                     状態
                   </th>
                 </tr>

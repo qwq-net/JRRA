@@ -23,7 +23,7 @@ export function UserProfile({ user }: UserProfileProps) {
       )}
       <div className="flex flex-col">
         <span className="text-lg leading-tight font-bold text-gray-900">{user.name || 'Unknown Racer'}</span>
-        <span className="mt-0.5 w-fit rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-500">
+        <span className="mt-0.5 w-fit rounded bg-gray-100 px-1.5 py-0.5 text-sm font-medium text-gray-500">
           {user.role}
         </span>
       </div>

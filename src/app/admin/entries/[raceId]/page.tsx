@@ -39,7 +39,7 @@ export default async function RaceEntryPage({ params }: Props) {
               {race.location}
             </span>
             <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+              className={`rounded-full px-2 py-0.5 text-sm font-medium ${
                 race.surface === '芝' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
               }`}
             >
@@ -47,7 +47,7 @@ export default async function RaceEntryPage({ params }: Props) {
             </span>
             {race.condition && (
               <span
-                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                className={`rounded-full px-2 py-0.5 text-sm font-medium ${
                   race.condition === '良'
                     ? 'bg-sky-100 text-sky-800'
                     : race.condition === '稍重'

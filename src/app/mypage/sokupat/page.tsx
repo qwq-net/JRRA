@@ -98,7 +98,7 @@ export default async function SokupatPage() {
                     <span className="text-sm font-medium text-nowrap text-gray-500">投票可能残高</span>
                     <span className="text-lg font-black text-gray-900">
                       {Math.floor(balance).toLocaleString()}
-                      <span className="ml-0.5 text-xs font-bold text-gray-500">円</span>
+                      <span className="ml-0.5 text-sm font-bold text-gray-500">円</span>
                     </span>
                   </div>
                 </div>
@@ -109,10 +109,10 @@ export default async function SokupatPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="mb-1 flex items-center gap-2">
-                              <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gray-700 uppercase">
+                              <span className="rounded bg-gray-100 px-2 py-0.5 text-sm font-bold tracking-wider text-gray-700 uppercase">
                                 {race.location}
                               </span>
-                              <span className="text-xs font-medium text-gray-400">{race.date}</span>
+                              <span className="text-sm font-medium text-gray-400">{race.date}</span>
                               <Badge variant="status" label={STATUS_LABELS[race.status] || race.status} />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900">

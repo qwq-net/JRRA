@@ -129,7 +129,7 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
           placeholder="自動採番"
           className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
         />
-        <p className="mt-1 text-xs text-gray-500">未入力の場合は自動で採番されます</p>
+        <p className="mt-1 text-sm text-gray-500">未入力の場合は自動で採番されます</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -211,7 +211,7 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
               className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-sm text-gray-500">
             設定した時間になると自動的に投票が締め切られます。未設定の場合は手動での締め切りが必要です。
           </p>
         </div>

@@ -47,7 +47,7 @@ export function StandbyClient({
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <span
-              className={`rounded px-2 py-0.5 text-xs font-bold text-white ${
+              className={`rounded px-2 py-0.5 text-sm font-bold text-white ${
                 initialIsFinalized ? 'bg-gray-600' : 'bg-green-600'
               }`}
             >
@@ -89,7 +89,7 @@ export function StandbyClient({
         </div>
       )}
 
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full bg-black/80 px-4 py-2 text-xs font-bold text-white shadow-lg backdrop-blur-sm">
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full bg-black/80 px-4 py-2 text-sm font-bold text-white shadow-lg backdrop-blur-sm">
         {connectionStatus === 'CONNECTED' && (
           <>
             <div className="relative flex h-3 w-3">

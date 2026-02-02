@@ -40,12 +40,12 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div>
-          <div className="mb-1 text-xs font-bold text-gray-500">購入合計</div>
+          <div className="mb-1 text-sm font-bold text-gray-500">購入合計</div>
           <div className="text-xl font-black text-gray-900">{totalAmount.toLocaleString()}円</div>
         </div>
         {(totalPayout > 0 || tickets.some((t) => t.status !== 'PENDING')) && (
           <div className="text-right">
-            <div className="mb-1 text-xs font-bold text-gray-500">払戻合計</div>
+            <div className="mb-1 text-sm font-bold text-gray-500">払戻合計</div>
             <div className={`text-xl font-black ${totalPayout > 0 ? 'text-red-600' : 'text-gray-900'}`}>
               {totalPayout.toLocaleString()}円
             </div>
@@ -69,23 +69,23 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
             <div className="flex items-center justify-between py-3 pr-4 pl-5">
               <div className="flex-1">
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
+                  <span className="rounded bg-gray-100 px-2 py-0.5 text-sm font-bold text-gray-500">
                     {BET_TYPE_LABELS[ticket.type]}
                   </span>
                   {ticket.status === 'HIT' && (
-                    <span className="flex items-center gap-1 text-xs font-bold text-red-600">
+                    <span className="flex items-center gap-1 text-sm font-bold text-red-600">
                       <CheckCircle2 size={12} />
                       的中
                     </span>
                   )}
                   {ticket.status === 'LOST' && (
-                    <span className="flex items-center gap-1 text-xs font-bold text-gray-400">
+                    <span className="flex items-center gap-1 text-sm font-bold text-gray-400">
                       <XCircle size={12} />
                       不的中
                     </span>
                   )}
                   {ticket.status === 'PENDING' && (
-                    <span className="flex items-center gap-1 text-xs font-bold text-blue-500">
+                    <span className="flex items-center gap-1 text-sm font-bold text-blue-500">
                       <Clock size={12} />
                       待機中
                     </span>
@@ -97,7 +97,7 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
                     <div key={idx} className="flex items-center gap-2 text-sm font-bold text-gray-800">
                       {idx > 0 && <span className="text-gray-300">-</span>}
                       <span className="font-mono text-lg">{s.horseNumber || s.bracketNumber}</span>
-                      <span className="max-w-[80px] truncate text-xs font-normal text-gray-500 sm:max-w-none">
+                      <span className="max-w-[80px] truncate text-sm font-normal text-gray-500 sm:max-w-none">
                         {s.horseName}
                       </span>
                     </div>
@@ -108,7 +108,7 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
               <div className="text-right">
                 <div className="text-sm font-bold text-gray-900">{ticket.amount.toLocaleString()}円</div>
                 {ticket.status === 'HIT' && (
-                  <div className="mt-0.5 text-xs font-bold text-red-600">{ticket.payout?.toLocaleString()}円</div>
+                  <div className="mt-0.5 text-sm font-bold text-red-600">{ticket.payout?.toLocaleString()}円</div>
                 )}
               </div>
             </div>

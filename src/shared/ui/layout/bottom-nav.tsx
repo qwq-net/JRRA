@@ -24,7 +24,7 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors',
+                'flex flex-col items-center justify-center gap-1 text-sm font-medium transition-colors',
                 isActive ? 'text-primary' : 'text-gray-500 hover:text-gray-900'
               )}
             >

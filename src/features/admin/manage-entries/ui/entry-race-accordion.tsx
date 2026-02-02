@@ -1,9 +1,10 @@
 'use client';
 
+import { useIsMounted } from '@/shared/hooks/use-is-mounted';
 import * as Accordion from '@radix-ui/react-accordion';
 import { Calendar, ChevronDown, ChevronRight, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface EntryRaceAccordionProps {
   events: Array<{
@@ -23,24 +24,30 @@ interface EntryRaceAccordionProps {
 const STORAGE_KEY = 'entry-race-accordion-open-items';
 
 export function EntryRaceAccordion({ events }: EntryRaceAccordionProps) {
-  const [openItems, setOpenItems] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
+  const isMounted = useIsMounted();
+  const [openItems, setOpenItems] = useState<string[]>([]);
+
+  useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Defer state update to avoid synchronous render warning
+        setTimeout(() => setOpenItems(parsed), 0);
       } catch (e) {
         console.error('Failed to parse saved accordion state', e);
-        return [];
       }
     }
-    return [];
-  });
+  }, []);
 
   const handleValueChange = (value: string[]) => {
     setOpenItems(value);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   if (events.length === 0) {
     return (
@@ -82,13 +89,13 @@ export function EntryRaceAccordion({ events }: EntryRaceAccordionProps) {
                       <div>
                         <div className="text-primary flex items-center gap-2 font-bold">
                           {race.raceNumber ? (
-                            <span className="text-xs font-black tracking-tighter text-gray-400 uppercase">
+                            <span className="text-sm font-black tracking-tighter text-gray-400 uppercase">
                               {race.raceNumber}R
                             </span>
                           ) : null}
                           {race.name}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
                             {race.location}

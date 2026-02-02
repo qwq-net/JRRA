@@ -142,7 +142,7 @@ export function KitchenTimer({ raceId, initialClosingAt, status }: KitchenTimerP
                 key={mins}
                 variant="outline"
                 size="sm"
-                className="h-8 text-xs font-bold"
+                className="h-8 text-sm font-bold"
                 onClick={() => handleSetTimer(mins)}
               >
                 +{mins}分
@@ -151,7 +151,7 @@ export function KitchenTimer({ raceId, initialClosingAt, status }: KitchenTimerP
           </div>
 
           <div className="mt-3 border-t border-gray-100 pt-2 text-center">
-            <p className="text-[10px] leading-tight text-gray-400">
+            <p className="text-sm leading-tight text-gray-400">
               設定すると締切時刻が上書きされます。
               <br />
               0になると自動的に締切処理が走ります。

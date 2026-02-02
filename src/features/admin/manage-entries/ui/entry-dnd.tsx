@@ -75,15 +75,15 @@ function SortableEntry({
         <GripVertical className="h-4 w-4" />
       </button>
       <span
-        className={`flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${getBracketColor(bracketNumber)}`}
+        className={`flex h-6 w-6 items-center justify-center rounded text-sm font-bold ${getBracketColor(bracketNumber)}`}
       >
         {bracketNumber || '?'}
       </span>
-      <span className="text-primary bg-primary/10 flex h-6 w-6 items-center justify-center rounded text-xs font-bold">
+      <span className="text-primary bg-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold">
         {horseNumber}
       </span>
       <span className="flex-1 font-medium text-gray-900">{horse.name}</span>
-      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(horse.gender)}`}>
+      <span className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(horse.gender)}`}>
         {getDisplayGender(horse.gender)}
       </span>
       <button
@@ -118,7 +118,7 @@ function DraggableHorse({ horse, onClick }: { horse: Horse; onClick: () => void 
       className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-gray-300 hover:bg-gray-50"
     >
       <span className="flex-1 text-sm font-medium text-gray-900">{horse.name}</span>
-      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(horse.gender)}`}>
+      <span className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(horse.gender)}`}>
         {getDisplayGender(horse.gender)}
       </span>
     </div>
@@ -273,7 +273,7 @@ export function EntryDnd({ raceId, availableHorses: initialAvailable, existingEn
         {activeHorse && (
           <div className="flex items-center gap-3 rounded-lg border border-gray-300 bg-white p-3 shadow-lg">
             <span className="font-medium text-gray-900">{activeHorse.name}</span>
-            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(activeHorse.gender)}`}>
+            <span className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(activeHorse.gender)}`}>
               {getDisplayGender(activeHorse.gender)}
             </span>
           </div>

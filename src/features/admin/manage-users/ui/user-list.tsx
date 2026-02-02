@@ -42,7 +42,7 @@ export async function UserList({ users }: UserListProps) {
                       className="rounded-full shadow-sm ring-1 ring-gray-200"
                     />
                   ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-bold text-gray-400">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm font-bold text-gray-400">
                       ?
                     </div>
                   )}
@@ -51,13 +51,11 @@ export async function UserList({ users }: UserListProps) {
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-500">
+                  <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-gray-500">
                     {user.id.substring(0, 8)}...
                   </code>
                   {user.id === session.user.id && (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                      YOU
-                    </span>
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-sm text-blue-700">自分</span>
                   )}
                 </div>
               </td>

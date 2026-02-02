@@ -87,7 +87,7 @@ export default async function AdminPage() {
                 <stat.icon className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-xs font-medium text-gray-500">{stat.label}</p>
+                <p className="text-sm font-medium text-gray-500">{stat.label}</p>
                 <h3 className="text-secondary text-lg font-bold">{stat.value}</h3>
               </div>
             </CardContent>
@@ -110,7 +110,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">ユーザー管理</h4>
-                <p className="text-xs text-gray-500">ユーザー一覧の確認と権限変更</p>
+                <p className="text-sm text-gray-500">ユーザー一覧の確認と権限変更</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-blue-600" />
@@ -126,7 +126,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">イベント管理</h4>
-                <p className="text-xs text-gray-500">イベントの追加・編集・確定処理</p>
+                <p className="text-sm text-gray-500">イベントの追加・編集・確定処理</p>
               </div>
             </div>
             <ArrowRight className="group-hover:text-primary h-5 w-5 text-gray-300 transition-colors" />
@@ -142,7 +142,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">馬管理</h4>
-                <p className="text-xs text-gray-500">競走馬の新規登録と情報管理</p>
+                <p className="text-sm text-gray-500">競走馬の新規登録と情報管理</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-amber-600" />
@@ -158,7 +158,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">レース管理</h4>
-                <p className="text-xs text-gray-500">レースの作成・管理</p>
+                <p className="text-sm text-gray-500">レースの作成・管理</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-purple-600" />
@@ -174,7 +174,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">出走馬管理</h4>
-                <p className="text-xs text-gray-500">レースへの競走馬の割り当て</p>
+                <p className="text-sm text-gray-500">レースへの競走馬の割り当て</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-green-600" />
@@ -190,7 +190,7 @@ export default async function AdminPage() {
               </div>
               <div>
                 <h4 className="text-secondary font-bold">馬券管理</h4>
-                <p className="text-xs text-gray-500">購入された馬券の確認と管理</p>
+                <p className="text-sm text-gray-500">購入された馬券の確認と管理</p>
               </div>
             </div>
             <ArrowRight className="h-5 w-5 text-gray-300 transition-colors group-hover:text-indigo-600" />

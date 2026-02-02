@@ -45,7 +45,7 @@ export function TransactionList({ transactions }: TransactionListProps) {
               </div>
               <div>
                 <div className="font-bold text-gray-900">{tx.description || typeLabels[tx.type] || tx.type}</div>
-                <div className="text-xs text-gray-400">
+                <div className="text-sm text-gray-400">
                   <FormattedDate
                     date={tx.createdAt}
                     options={{

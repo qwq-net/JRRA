@@ -213,12 +213,12 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
         <table className="w-full text-left text-sm">
           <thead className="bg-gray-50">
             <tr className="border-b border-gray-200">
-              <th className="px-2 py-2 text-xs font-bold">枠番</th>
-              <th className="px-2 py-2 text-xs font-bold">馬番</th>
-              <th className="px-2 py-2 text-xs font-bold">馬名</th>
-              <th className="px-2 py-2 text-xs font-bold">性齢</th>
+              <th className="px-2 py-2 text-sm font-bold">枠番</th>
+              <th className="px-2 py-2 text-sm font-bold">馬番</th>
+              <th className="px-2 py-2 text-sm font-bold">馬名</th>
+              <th className="px-2 py-2 text-sm font-bold">性齢</th>
               {columnLabels.map((label, i) => (
-                <th key={i} className="px-2 py-2 text-center text-xs font-bold">
+                <th key={i} className="px-2 py-2 text-center text-sm font-bold">
                   {label}
                 </th>
               ))}
@@ -235,7 +235,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                       {idx === 0 && (
                         <td className="px-2 align-middle" rowSpan={bracketEntries.length}>
                           <span
-                            className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${getBracketColor(Number(bracket))}`}
+                            className={`inline-flex h-6 w-6 items-center justify-center rounded text-sm font-bold ${getBracketColor(Number(bracket))}`}
                           >
                             {bracket}
                           </span>
@@ -245,7 +245,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                       <td className="px-2 py-2 text-sm font-bold">{entry.horseName}</td>
                       <td className="px-2 py-2">
                         <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(entry.horseGender)}`}
+                          className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(entry.horseGender)}`}
                         >
                           {getGenderAge(entry.horseGender, entry.horseAge)}
                         </span>
@@ -272,7 +272,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                   >
                     <td className="px-2 py-2">
                       <span
-                        className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${getBracketColor(entry.bracketNumber!)}`}
+                        className={`inline-flex h-6 w-6 items-center justify-center rounded text-sm font-bold ${getBracketColor(entry.bracketNumber!)}`}
                       >
                         {entry.bracketNumber}
                       </span>
@@ -281,7 +281,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                     <td className="px-2 py-2 text-sm font-bold">{entry.horseName}</td>
                     <td className="px-2 py-2">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${getGenderBadgeClass(entry.horseGender)}`}
+                        className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(entry.horseGender)}`}
                       >
                         {getGenderAge(entry.horseGender, entry.horseAge)}
                       </span>
@@ -354,7 +354,7 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs text-gray-400">残高: {balance.toLocaleString()}円</span>
+          <span className="text-sm text-gray-400">残高: {balance.toLocaleString()}円</span>
           <Button
             type="button"
             onClick={handleSubmit}

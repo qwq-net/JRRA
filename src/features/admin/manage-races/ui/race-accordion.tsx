@@ -1,10 +1,11 @@
 'use client';
 
+import { useIsMounted } from '@/shared/hooks/use-is-mounted';
 import { Badge } from '@/shared/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDown, Eye } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EditRaceDialog } from './edit-race-dialog';
 
 interface RaceAccordionProps {
@@ -31,24 +32,30 @@ interface RaceAccordionProps {
 const STORAGE_KEY = 'race-accordion-open-items';
 
 export function RaceAccordion({ events, allEvents }: RaceAccordionProps) {
-  const [openItems, setOpenItems] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
+  const isMounted = useIsMounted();
+  const [openItems, setOpenItems] = useState<string[]>([]);
+
+  useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Defer state update to avoid synchronous render warning
+        setTimeout(() => setOpenItems(parsed), 0);
       } catch (e) {
         console.error('Failed to parse saved accordion state', e);
-        return [];
       }
     }
-    return [];
-  });
+  }, []);
 
   const handleValueChange = (value: string[]) => {
     setOpenItems(value);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   if (events.length === 0) {
     return <div className="py-12 text-center text-gray-500">登録されているレースはありません</div>;
@@ -77,25 +84,25 @@ export function RaceAccordion({ events, allEvents }: RaceAccordionProps) {
                 <table className="w-full min-w-[800px] border-collapse">
                   <thead className="bg-gray-50">
                     <tr className="border-b border-gray-100">
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         番号
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         レース名
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         場所
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         距離
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         馬場
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="px-6 py-3 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         状態
                       </th>
-                      <th className="w-24 px-6 py-3 text-right text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+                      <th className="w-24 px-6 py-3 text-right text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
                         操作
                       </th>
                     </tr>
@@ -119,7 +126,7 @@ export function RaceAccordion({ events, allEvents }: RaceAccordionProps) {
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               href={`/admin/races/${race.id}`}
-                              className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                              className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
                             >
                               <Eye className="h-3 w-3" />
                               詳細

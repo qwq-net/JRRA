@@ -95,13 +95,13 @@ export default async function RaceDetailPage({ params }: { params: Promise<{ id:
                       <div className="flex items-center gap-3">
                         <span
                           className={cn(
-                            'flex h-7 w-7 items-center justify-center rounded text-xs font-bold ring-1 ring-black/5',
+                            'flex h-7 w-7 items-center justify-center rounded text-sm font-bold ring-1 ring-black/5',
                             getBracketColor(entry.bracketNumber)
                           )}
                         >
                           {entry.bracketNumber || '?'}
                         </span>
-                        <span className="text-primary bg-primary/10 ring-primary/10 flex h-7 w-7 items-center justify-center rounded text-xs font-bold ring-1">
+                        <span className="text-primary bg-primary/10 ring-primary/10 flex h-7 w-7 items-center justify-center rounded text-sm font-bold ring-1">
                           {entry.horseNumber || '?'}
                         </span>
                       </div>

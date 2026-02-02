@@ -104,13 +104,13 @@ function SortableResultItem({ entry, position }: { entry: Entry; position: numbe
       <div className="flex items-center gap-2">
         <span
           className={cn(
-            'flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold ring-1 ring-black/5',
+            'flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1 ring-black/5',
             getBracketColor(entry.bracketNumber)
           )}
         >
           {entry.bracketNumber || '?'}
         </span>
-        <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold ring-1">
+        <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1">
           {entry.horseNumber || '?'}
         </span>
       </div>
@@ -244,7 +244,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
         <div className="flex items-end justify-between px-1">
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-black text-gray-900">着順を確定する</h2>
-            <div className="mb-0.5 flex items-center gap-1.5 text-xs font-semibold text-gray-400">
+            <div className="mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-gray-400">
               <Info className="h-4 w-4" />
               ドラッグして着順を並び替えてください
             </div>
@@ -252,7 +252,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
           {isChanged && (
             <button
               onClick={handleReset}
-              className="hover:text-primary mb-0.5 flex items-center gap-1.5 text-xs font-bold text-gray-400 transition-colors"
+              className="hover:text-primary mb-0.5 flex items-center gap-1.5 text-sm font-bold text-gray-400 transition-colors"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               リセット
@@ -291,13 +291,13 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        'flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold',
+                        'flex h-6 w-6 items-center justify-center rounded text-sm font-bold',
                         getBracketColor(activeEntry.bracketNumber)
                       )}
                     >
                       {activeEntry.bracketNumber || '?'}
                     </span>
-                    <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold ring-1">
+                    <span className="text-primary bg-primary/10 ring-primary/10 flex h-6 w-6 items-center justify-center rounded text-sm font-bold ring-1">
                       {activeEntry.horseNumber || '?'}
                     </span>
                   </div>
@@ -343,7 +343,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <div className="flex items-center justify-between">
                 <span className="font-medium text-gray-500">受付終了予定</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-900">
+                  <span className="text-sm font-bold text-gray-900">
                     {race.closingAt ? (
                       <FormattedDate
                         date={race.closingAt}
@@ -365,7 +365,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
               <span className="font-medium text-gray-500">コース</span>
               <div>
                 <Badge variant="surface" label={race.surface} />
-                <span className="ml-1 text-xs font-bold text-gray-400">{race.distance}m</span>
+                <span className="ml-1 text-sm font-bold text-gray-400">{race.distance}m</span>
               </div>
             </div>
             <div className="flex items-center justify-between pb-2">
@@ -382,7 +382,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-gray-500">配当方式</Label>
+                <Label className="text-sm font-bold text-gray-500">配当方式</Label>
                 <Select
                   value={takeoutRate === 0 ? 'TOTAL' : 'STANDARD'}
                   onValueChange={(v: string) => setTakeoutRate(v === 'TOTAL' ? 0 : 30)}
@@ -394,7 +394,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
 
               <div className="flex items-start gap-2 rounded-xl bg-blue-50/50 p-3 ring-1 ring-blue-100/50">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-                <p className="text-[10px] leading-relaxed text-blue-600/80">
+                <p className="text-sm leading-relaxed text-blue-600/80">
                   {takeoutRate === 0
                     ? '全ての賭け金を的中者で山分けします。的中なし時は100円の特払いとなります。'
                     : '30%を差し引いた金額を的中者で分配します。的中なし時は70円の特払いとなります。'}
@@ -506,7 +506,7 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                 </Button>
                 <Button
                   variant="ghost"
-                  className="w-full text-xs font-bold text-gray-400 hover:text-red-500"
+                  className="w-full text-sm font-bold text-gray-400 hover:text-red-500"
                   onClick={handleServerReset}
                   disabled={isPayoutMoving || isPending}
                 >

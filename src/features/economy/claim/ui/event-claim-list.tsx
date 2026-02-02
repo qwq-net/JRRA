@@ -35,7 +35,7 @@ export function EventClaimList({ events }: { events: AvailableEvent[] }) {
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-bold">{event.name}</h3>
               <span
-                className={`inline-flex rounded-full px-2 py-0.5 text-xs font-black ${
+                className={`inline-flex rounded-full px-2 py-0.5 text-sm font-black ${
                   event.isJoined
                     ? 'bg-blue-100 text-blue-700'
                     : event.status === 'ACTIVE'

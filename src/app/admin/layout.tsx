@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <LayoutDashboard className="h-6 w-6" />
             <h1 className="text-xl font-bold tracking-tight text-white">JRRA Admin</h1>
           </div>
-          <p className="mt-2 text-[10px] font-medium tracking-wider text-gray-400 uppercase">
+          <p className="mt-2 text-sm font-medium tracking-wider text-gray-400 uppercase">
             Japan Ranranru Racing Association
           </p>
         </div>
@@ -71,12 +71,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               />
             ) : (
               <div className="bg-primary/20 text-primary border-primary/30 flex h-8 w-8 items-center justify-center rounded-full border">
-                <span className="text-xs font-bold">{session.user.name?.[0] || 'A'}</span>
+                <span className="text-sm font-bold">{session.user.name?.[0] || 'A'}</span>
               </div>
             )}
             <div className="flex flex-col overflow-hidden">
               <span className="truncate text-sm leading-none font-bold text-white">{session.user.name}</span>
-              <span className="mt-1 text-[10px] text-gray-400">Administrator</span>
+              <span className="mt-1 text-sm text-gray-400">Administrator</span>
             </div>
           </div>
           <LogoutButton />

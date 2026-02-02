@@ -21,28 +21,28 @@ export async function RaceList({ events }: RaceListProps) {
       <table className="w-full min-w-[800px] border-collapse">
         <thead className="bg-gray-50">
           <tr className="border-b border-gray-100">
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               イベント
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               レース名
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               場所
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               距離
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               馬場
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               締切
             </th>
-            <th className="px-6 py-4 text-left text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="px-6 py-4 text-left text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               状態
             </th>
-            <th className="w-24 px-6 py-4 text-right text-xs font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
+            <th className="w-24 px-6 py-4 text-right text-sm font-black tracking-wider whitespace-nowrap text-gray-400 uppercase">
               操作
             </th>
           </tr>
@@ -55,7 +55,7 @@ export async function RaceList({ events }: RaceListProps) {
               <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-500">{race.location}</td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <Badge variant="surface" label={race.surface} />
-                <span className="ml-1.5 text-xs font-black text-gray-400">{race.distance}m</span>
+                <span className="ml-1.5 text-sm font-black text-gray-400">{race.distance}m</span>
               </td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
                 <Badge variant="condition" label={race.condition} />

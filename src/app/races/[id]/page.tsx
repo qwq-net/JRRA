@@ -59,7 +59,7 @@ export default async function RacePage({ params }: { params: Promise<{ id: strin
       <div className="mb-8 space-y-2">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-3">
-            <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700">
+            <span className="rounded bg-gray-100 px-2 py-0.5 text-sm font-bold text-gray-700">
               {race.location} {race.distance}m ({race.surface})
             </span>
             <span className="text-sm font-medium text-gray-400">{race.date}</span>

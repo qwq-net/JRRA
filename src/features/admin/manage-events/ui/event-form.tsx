@@ -76,7 +76,7 @@ export function EventForm({ initialData, onSuccess }: EventFormProps) {
             />
             <span className="absolute top-2 right-3 text-sm text-gray-400">円</span>
           </div>
-          <p className="mt-1 text-xs text-gray-500">初期資金として配布されます</p>
+          <p className="mt-1 text-sm text-gray-500">初期資金として配布されます</p>
         </div>
 
         <div>
