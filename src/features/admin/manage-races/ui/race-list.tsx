@@ -1,4 +1,4 @@
-import { Badge } from '@/shared/ui';
+import { Badge, Button } from '@/shared/ui';
 import { FormattedDate } from '@/shared/ui/formatted-date';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
@@ -72,12 +72,11 @@ export async function RaceList({ events }: RaceListProps) {
               </td>
               <td className="px-6 py-4 text-right whitespace-nowrap">
                 <div className="flex items-center justify-end gap-2">
-                  <Link
-                    href={`/admin/races/${race.id}`}
-                    className="hover:text-primary flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-400 transition-colors hover:bg-gray-50"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Link>
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/admin/races/${race.id}`}>
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    </Link>
+                  </Button>
                   <EditRaceDialog
                     events={events}
                     race={{

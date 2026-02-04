@@ -1,7 +1,7 @@
 'use client';
 
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/shared/ui';
 import { BET_TYPES, BetType } from '@/types/betting';
-import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
 interface ResultItem {
@@ -45,55 +45,48 @@ const TYPE_LABELS: Record<BetType, string> = {
 
 export function PayoutResultModal({ raceName, raceDate, results, open, onOpenChange }: PayoutResultModalProps) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/80 duration-300" />
-        <Dialog.Content className="animate-in zoom-in-95 fixed top-[50%] left-[50%] z-50 w-full max-w-4xl translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-md border border-gray-700 bg-black shadow-2xl duration-300">
-          {}
-          <div className="flex items-center justify-between bg-linear-to-b from-blue-900 to-blue-950 px-6 py-3 text-white">
-            <div className="flex items-end gap-4">
-              <Dialog.Title asChild>
-                <div className="flex items-end gap-4">
-                  <span className="text-xl font-bold tracking-widest">{raceDate}</span>
-                  <span className="text-2xl font-black">{raceName}</span>
-                </div>
-              </Dialog.Title>
-              <Dialog.Description className="sr-only">{raceName}の払戻金結果を表示しています。</Dialog.Description>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-xl font-bold tracking-widest">払戻金</span>
-              <Dialog.Close asChild>
-                <button className="text-gray-400 hover:text-white">
-                  <X size={28} />
-                </button>
-              </Dialog.Close>
-            </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl border-gray-700 bg-black p-0 shadow-2xl">
+        <div className="flex items-center justify-between bg-linear-to-b from-blue-900 to-blue-950 px-6 py-3 text-white">
+          <div className="flex items-end gap-4">
+            <DialogTitle asChild>
+              <div className="flex items-end gap-4">
+                <span className="text-xl font-bold tracking-widest">{raceDate}</span>
+                <span className="text-2xl font-black">{raceName}</span>
+              </div>
+            </DialogTitle>
+            <DialogDescription className="sr-only">{raceName}の払戻金結果を表示しています。</DialogDescription>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-bold tracking-widest">払戻金</span>
+            <DialogClose asChild>
+              <button className="text-gray-400 hover:text-white">
+                <X size={28} />
+              </button>
+            </DialogClose>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-px bg-gray-700 p-px">
+          <div className="grid grid-cols-1 gap-px md:grid-cols-2">
+            {renderResultBlock(results, BET_TYPES.WIN)}
+            {renderResultBlock(results, BET_TYPES.BRACKET_QUINELLA)}
           </div>
 
-          <div className="flex flex-col gap-px bg-gray-700 p-px">
-            {}
-            <div className="grid grid-cols-1 gap-px md:grid-cols-2">
-              {renderResultBlock(results, BET_TYPES.WIN)}
-              {renderResultBlock(results, BET_TYPES.BRACKET_QUINELLA)}
-            </div>
-
-            {}
-            <div className="grid grid-cols-1 gap-px md:grid-cols-2">
-              {renderResultBlock(results, BET_TYPES.PLACE, 3)}
-              {renderResultBlock(results, BET_TYPES.WIDE, 3)}
-            </div>
-
-            {}
-            <div className="flex flex-col gap-px">
-              {renderResultBlock(results, BET_TYPES.QUINELLA, 1, true)}
-              {renderResultBlock(results, BET_TYPES.EXACTA, 1, true)}
-              {renderResultBlock(results, BET_TYPES.TRIO, 1, true)}
-              {renderResultBlock(results, BET_TYPES.TRIFECTA, 1, true)}
-            </div>
+          <div className="grid grid-cols-1 gap-px md:grid-cols-2">
+            {renderResultBlock(results, BET_TYPES.PLACE, 3)}
+            {renderResultBlock(results, BET_TYPES.WIDE, 3)}
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+
+          <div className="flex flex-col gap-px">
+            {renderResultBlock(results, BET_TYPES.QUINELLA, 1, true)}
+            {renderResultBlock(results, BET_TYPES.EXACTA, 1, true)}
+            {renderResultBlock(results, BET_TYPES.TRIO, 1, true)}
+            {renderResultBlock(results, BET_TYPES.TRIFECTA, 1, true)}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

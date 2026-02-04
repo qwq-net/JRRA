@@ -1,5 +1,6 @@
 'use client';
 
+import { Button, Input, Label, Select } from '@/shared/ui';
 import { toJSTString } from '@/shared/utils/date';
 import { Calendar, MapPin } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -56,25 +57,19 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">イベント</label>
-        <select
-          name="eventId"
-          required
-          value={eventId}
-          onChange={(e) => setEventId(e.target.value)}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-        >
+        <Label>イベント</Label>
+        <Select name="eventId" required value={eventId} onChange={(e) => setEventId(e.target.value)}>
           {events.map((event) => (
             <option key={event.id} value={event.id}>
               {event.date} - {event.name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">開催日</label>
+          <Label>開催日</Label>
           <div className="relative">
             <div className="focus-within:ring-primary/20 focus-within:border-primary flex w-full items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-all focus-within:ring-2 focus-within:outline-none">
               <Calendar className="h-4 w-4 text-gray-400" />
@@ -92,15 +87,15 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">開催場所</label>
+          <Label>開催場所</Label>
           <div className="relative">
             <MapPin className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
+            <Input
               name="location"
               type="text"
               required
               defaultValue={initialData?.location}
-              className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 py-2 pr-3 pl-9 text-sm transition-all focus:ring-2 focus:outline-none"
+              className="pl-9"
               placeholder="例: 東京"
             />
           </div>
@@ -108,46 +103,37 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">レース名</label>
-        <input
-          name="name"
-          type="text"
-          required
-          defaultValue={initialData?.name}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-          placeholder="例: ジャパンカップ"
-        />
+        <Label>レース名</Label>
+        <Input name="name" type="text" required defaultValue={initialData?.name} placeholder="例: ジャパンカップ" />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">レース番号（省略可）</label>
-        <input
+        <Label>レース番号（省略可）</Label>
+        <Input
           name="raceNumber"
           type="number"
           min="1"
           defaultValue={initialData?.raceNumber || ''}
           placeholder="自動採番"
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
         />
         <p className="mt-1 text-sm text-gray-500">未入力の場合は自動で採番されます</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">距離 (m)</label>
-          <input
+          <Label>距離 (m)</Label>
+          <Input
             name="distance"
             type="number"
             min="100"
             required
             defaultValue={initialData?.distance}
-            className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
             placeholder="2400"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">コース</label>
+          <Label>コース</Label>
           <div className="flex gap-2">
             {['芝', 'ダート'].map((s) => (
               <label
@@ -174,7 +160,7 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">馬場状態</label>
+        <Label>馬場状態</Label>
         <div className="flex gap-2">
           {['良', '稍重', '重', '不良'].map((c) => (
             <label
@@ -201,14 +187,13 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
 
       {showClosingAt && (
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">受付終了時刻</label>
+          <Label>受付終了時刻</Label>
           <div className="relative">
-            <input
+            <Input
               name="closingAt"
               type="datetime-local"
               value={closingAt}
               onChange={(e) => setClosingAt(e.target.value)}
-              className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
             />
           </div>
           <p className="mt-1 text-sm text-gray-500">
@@ -217,12 +202,12 @@ export function RaceForm({ initialData, events, onSuccess, showClosingAt = false
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
-        className="from-primary to-primary/80 hover:to-primary w-full rounded-md bg-linear-to-r px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg"
+        className="from-primary to-primary/80 hover:to-primary w-full bg-linear-to-r shadow-md transition-all hover:shadow-lg"
       >
         {initialData ? '更新する' : '登録する'}
-      </button>
+      </Button>
     </form>
   );
 }

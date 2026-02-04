@@ -3,9 +3,9 @@
 import { placeBet } from '@/features/betting/actions';
 import { calculateBetCount, getValidBetCombinations } from '@/features/betting/lib/calculations';
 import { getBetTypeColumnCount, getBetTypeColumnLabels } from '@/features/betting/model/bet-types';
-import { Button, Input } from '@/shared/ui';
+import { Badge, Button, Input } from '@/shared/ui';
 import { getBracketColor } from '@/shared/utils/bracket';
-import { getGenderAge, getGenderBadgeClass } from '@/shared/utils/gender';
+import { getGenderAge } from '@/shared/utils/gender';
 import { BET_TYPE_LABELS, BET_TYPES, BetType } from '@/types/betting';
 import { AlertCircle, Calculator, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -244,11 +244,9 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                       <td className="px-2 py-2 text-sm font-bold">{entry.horseNumber}</td>
                       <td className="px-2 py-2 text-sm font-bold">{entry.horseName}</td>
                       <td className="px-2 py-2">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(entry.horseGender)}`}
-                        >
+                        <Badge variant="gender" label={entry.horseGender}>
                           {getGenderAge(entry.horseGender, entry.horseAge)}
-                        </span>
+                        </Badge>
                       </td>
                       {idx === 0 &&
                         Array.from({ length: columnCount }).map((_, colIdx) => (
@@ -280,11 +278,9 @@ export function BetTable({ raceId, walletId, balance, entries, initialStatus, cl
                     <td className="px-2 py-2 text-sm font-bold">{entry.horseNumber}</td>
                     <td className="px-2 py-2 text-sm font-bold">{entry.horseName}</td>
                     <td className="px-2 py-2">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-sm font-medium ${getGenderBadgeClass(entry.horseGender)}`}
-                      >
+                      <Badge variant="gender" label={entry.horseGender}>
                         {getGenderAge(entry.horseGender, entry.horseAge)}
-                      </span>
+                      </Badge>
                     </td>
                     {Array.from({ length: columnCount }).map((_, colIdx) => (
                       <td key={colIdx} className="px-2 py-2 text-center">

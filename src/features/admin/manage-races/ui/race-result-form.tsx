@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Button, Label, Select, SelectItem } from '@/shared/ui';
+import { Badge, Button, Label, Select } from '@/shared/ui';
 import { FormattedDate } from '@/shared/ui/formatted-date';
 import { getBracketColor } from '@/shared/utils/bracket';
 import { cn } from '@/shared/utils/cn';
@@ -250,13 +250,15 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
             </div>
           </div>
           {isChanged && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleReset}
-              className="hover:text-primary mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-gray-400 transition-colors"
+              className="mb-0.5 h-auto p-0 font-semibold text-gray-400 hover:bg-transparent hover:text-gray-600"
             >
-              <RotateCcw className="h-3.5 w-3.5" />
+              <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
               リセット
-            </button>
+            </Button>
           )}
         </div>
 
@@ -385,10 +387,10 @@ export function RaceResultForm({ raceId, entries: initialEntries, race, hasPayou
                 <Label className="text-sm font-semibold text-gray-500">配当方式</Label>
                 <Select
                   value={takeoutRate === 0 ? 'TOTAL' : 'STANDARD'}
-                  onValueChange={(v: string) => setTakeoutRate(v === 'TOTAL' ? 0 : 30)}
+                  onChange={(e) => setTakeoutRate(e.target.value === 'TOTAL' ? 0 : 30)}
                 >
-                  <SelectItem value="TOTAL">全額配分 (控除率0%)</SelectItem>
-                  <SelectItem value="STANDARD">標準配分 (控除率30%)</SelectItem>
+                  <option value="TOTAL">全額配分 (控除率0%)</option>
+                  <option value="STANDARD">標準配分 (控除率30%)</option>
                 </Select>
               </div>
 

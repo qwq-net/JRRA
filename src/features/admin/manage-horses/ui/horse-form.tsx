@@ -1,5 +1,6 @@
 'use client';
 
+import { Button, Input, Label, Select, Textarea } from '@/shared/ui';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createHorse, updateHorse } from '../actions';
@@ -41,20 +42,13 @@ export function HorseForm({ initialData, onSuccess }: HorseFormProps) {
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">馬名</label>
-        <input
-          name="name"
-          type="text"
-          required
-          defaultValue={initialData?.name}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-          placeholder="例: ディープインパクト"
-        />
+        <Label>馬名</Label>
+        <Input name="name" type="text" required defaultValue={initialData?.name} placeholder="例: ディープインパクト" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">性別</label>
+          <Label>性別</Label>
           <div className="flex gap-2">
             {['牡', '牝', 'セン'].map((g) => (
               <label
@@ -80,54 +74,41 @@ export function HorseForm({ initialData, onSuccess }: HorseFormProps) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+          <Label>
             年齢 <span className="font-normal text-gray-400">(任意)</span>
-          </label>
-          <input
-            name="age"
-            type="number"
-            min="2"
-            max="20"
-            defaultValue={initialData?.age ?? ''}
-            className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-            placeholder="例: 4"
-          />
+          </Label>
+          <Input name="age" type="number" min="2" max="20" defaultValue={initialData?.age ?? ''} placeholder="例: 4" />
         </div>
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">産地</label>
-        <select
-          name="origin"
-          required
-          defaultValue={initialData?.origin || 'DOMESTIC'}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-        >
+        <Label>産地</Label>
+        <Select name="origin" required defaultValue={initialData?.origin || 'DOMESTIC'}>
           <option value="DOMESTIC">日本産</option>
           <option value="FOREIGN_BRED">外国産</option>
           <option value="FOREIGN_TRAINED">外来馬</option>
-        </select>
+        </Select>
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+        <Label>
           備考 <span className="font-normal text-gray-400">(任意)</span>
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           name="notes"
           rows={3}
           defaultValue={initialData?.notes ?? ''}
-          className="focus:ring-primary/20 focus:border-primary w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
           placeholder="馬の特徴や評価など"
+          className="resize-none"
         />
       </div>
 
-      <button
+      <Button
         type="submit"
-        className="from-primary to-primary/80 hover:to-primary w-full rounded-md bg-linear-to-r px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg"
+        className="from-primary to-primary/80 hover:to-primary w-full bg-linear-to-r shadow-md transition-all hover:shadow-lg"
       >
         {initialData ? '更新する' : '登録する'}
-      </button>
+      </Button>
     </form>
   );
 }

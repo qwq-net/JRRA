@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/shared/ui';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
@@ -22,9 +23,9 @@ export function EditHorseDialog({ horse }: EditHorseDialogProps) {
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
-        <button className="mr-2 text-gray-400 transition-colors hover:text-blue-600" title="編集">
+        <Button variant="ghost" size="icon" className="mr-2 text-gray-400 hover:text-blue-600" title="編集">
           <Pencil size={18} />
-        </button>
+        </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/50 duration-200" />
@@ -32,12 +33,12 @@ export function EditHorseDialog({ horse }: EditHorseDialogProps) {
           <div className="mb-4 flex items-center justify-between">
             <AlertDialog.Title className="text-xl font-semibold text-gray-900">馬情報の編集</AlertDialog.Title>
             <AlertDialog.Cancel asChild>
-              <button className="text-gray-400 hover:text-gray-600">
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
                 <span className="sr-only">閉じる</span>
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </Button>
             </AlertDialog.Cancel>
           </div>
 
@@ -47,7 +48,7 @@ export function EditHorseDialog({ horse }: EditHorseDialogProps) {
 
           <div className="mt-4 flex justify-end">
             <AlertDialog.Cancel asChild>
-              <button className="text-sm font-medium text-gray-500 hover:text-gray-700">キャンセル</button>
+              <Button variant="ghost">キャンセル</Button>
             </AlertDialog.Cancel>
           </div>
         </AlertDialog.Content>

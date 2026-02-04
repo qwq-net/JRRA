@@ -1,6 +1,7 @@
 'use client';
 
-import { Input } from '@/shared/ui';
+import { Badge, Button, Input } from '@/shared/ui';
+import { FormattedDate } from '@/shared/ui/formatted-date';
 import { Ban, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -71,13 +72,9 @@ export function GuestCodeManager({ codes }: { codes: GuestCode[] }) {
             onChange={(e) => setTitle(e.target.value)}
             className="max-w-lg"
           />
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating || !title}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
-          >
+          <Button onClick={handleGenerate} disabled={isGenerating || !title} className="shadow-sm disabled:opacity-50">
             {isGenerating ? '発行中...' : 'コード発行'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -133,36 +130,36 @@ export function GuestCodeManager({ codes }: { codes: GuestCode[] }) {
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">{code.creator?.name || '不明'}</td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {new Date(code.createdAt).toLocaleDateString('ja-JP')}
+                    <FormattedDate date={code.createdAt} />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {code.disabledAt ? (
-                      <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-sm font-medium text-red-700 ring-1 ring-red-600/10 ring-inset">
-                        無効
-                      </span>
+                      <Badge variant="status" label="無効" />
                     ) : (
-                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-sm font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                        有効
-                      </span>
+                      <Badge variant="status" label="有効" />
                     )}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
                     <div className="flex justify-end space-x-2">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => handleInvalidateUsers(code.code)}
-                        className="inline-flex items-center rounded p-1.5 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-900"
                         title="このコードの全ユーザーを凍結"
                       >
                         <Ban className="h-4 w-4" />
-                      </button>
+                      </Button>
                       {!code.disabledAt && (
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleInvalidateCode(code.code)}
-                          className="inline-flex items-center rounded p-1.5 text-orange-600 transition-colors hover:bg-orange-50 hover:text-orange-900"
+                          className="text-orange-600 hover:bg-orange-50 hover:text-orange-900"
                           title="コード無効化"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>

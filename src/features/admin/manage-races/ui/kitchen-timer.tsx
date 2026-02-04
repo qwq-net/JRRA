@@ -131,9 +131,14 @@ export function KitchenTimer({ raceId, initialClosingAt, status }: KitchenTimerP
               <Timer className="text-primary h-4 w-4" />
               タイマー
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(false)}
+              className="h-6 w-6 text-gray-400 hover:text-gray-600"
+            >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">

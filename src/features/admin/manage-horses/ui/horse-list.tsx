@@ -1,4 +1,5 @@
-import { getDisplayGender, getGenderBadgeClass } from '@/shared/utils/gender';
+import { Badge } from '@/shared/ui';
+import { getDisplayGender } from '@/shared/utils/gender';
 import { getHorses } from '../actions';
 import { DeleteHorseButton } from './delete-horse-button';
 import { EditHorseDialog } from './edit-horse-dialog';
@@ -46,16 +47,10 @@ export async function HorseList() {
             <tr key={horse.id} className="transition-colors hover:bg-gray-50">
               <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900">{horse.name}</td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
-                <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-sm font-semibold text-gray-700">
-                  {originLabels[horse.origin] || '不明'}
-                </span>
+                <Badge label={originLabels[horse.origin] || '不明'} variant="origin" />
               </td>
               <td className="px-6 py-4 text-sm whitespace-nowrap">
-                <span
-                  className={`inline-flex rounded-full px-2 py-0.5 text-sm font-semibold ${getGenderBadgeClass(horse.gender)}`}
-                >
-                  {getDisplayGender(horse.gender)}
-                </span>
+                <Badge label={getDisplayGender(horse.gender)} variant="gender" />
               </td>
               <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-600">
                 {horse.age ? `${horse.age}歳` : '-'}

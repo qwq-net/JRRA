@@ -1,66 +1,62 @@
+import { cn } from '@/shared/utils/cn';
 import React from 'react';
 
-export const Label = ({
-  children,
-  htmlFor,
-  className = '',
-}: {
-  children: React.ReactNode;
-  htmlFor?: string;
-  className?: string;
-}) => (
-  <label htmlFor={htmlFor} className={`mb-1.5 block text-sm font-semibold text-gray-700 ${className}`}>
+export const Label = ({ children, htmlFor, className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) => (
+  <label htmlFor={htmlFor} className={cn('mb-1.5 block text-sm font-semibold text-gray-700', className)} {...props}>
     {children}
   </label>
 );
 
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className = '', ...props }, ref) => (
+  ({ className, ...props }, ref) => (
     <input
       ref={ref}
-      className={`focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={cn(
+        'focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+        className
+      )}
       {...props}
     />
   )
 );
 Input.displayName = 'Input';
 
-export const Select = ({
-  children,
-  value,
-  onValueChange,
-  className = '',
-}: {
-  children: React.ReactNode;
-  value: string;
-  onValueChange: (v: string) => void;
-  className?: string;
-}) => {
-  return (
-    <div className={`relative ${className}`}>
-      <select
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
-        className="focus:ring-primary/20 focus:border-primary w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {children}
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-        <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
-          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-        </svg>
-      </div>
-    </div>
-  );
-};
+export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className, ...props }, ref) => (
+    <textarea
+      ref={ref}
+      className={cn(
+        'focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+        className
+      )}
+      {...props}
+    />
+  )
+);
+Textarea.displayName = 'Textarea';
 
-export const SelectTrigger = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-export const SelectValue = ({ placeholder }: { placeholder?: string }) => (
-  <option value="" disabled>
-    {placeholder}
-  </option>
+// Select component wrapper to maintain consistent styling with native select
+export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <div className="relative">
+        <select
+          ref={ref}
+          className={cn(
+            'focus:ring-primary/20 focus:border-primary w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+          <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
 );
-export const SelectContent = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-export const SelectItem = ({ value, children }: { value: string; children: React.ReactNode }) => (
-  <option value={value}>{children}</option>
-);
+Select.displayName = 'Select';

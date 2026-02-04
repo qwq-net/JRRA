@@ -9,7 +9,10 @@ export async function getEventsWithRaces() {
     orderBy: (events, { desc }) => [desc(events.date)],
     with: {
       races: {
-        orderBy: (races, { asc }) => [asc(races.name)],
+        orderBy: (races, { asc }) => [asc(races.raceNumber)],
+        with: {
+          entries: true,
+        },
       },
     },
   });

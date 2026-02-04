@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/shared/ui';
+import { Button, Input, Label, Textarea } from '@/shared/ui';
 import { Calendar } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -42,22 +42,15 @@ export function EventForm({ initialData, onSuccess }: EventFormProps) {
   return (
     <form ref={formRef} action={handleSubmit} className="space-y-5">
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">イベント名</label>
-        <input
-          name="name"
-          required
-          defaultValue={initialData?.name}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
-          placeholder="例: 第1回 拠り所杯"
-        />
+        <Label>イベント名</Label>
+        <Input name="name" required defaultValue={initialData?.name} placeholder="例: 第1回 拠り所杯" />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-gray-700">説明 (任意)</label>
-        <textarea
+        <Label>説明 (任意)</Label>
+        <Textarea
           name="description"
           defaultValue={initialData?.description || ''}
-          className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-all focus:ring-2 focus:outline-none"
           rows={3}
           placeholder="イベントの詳細や説明を入力"
         />
@@ -65,14 +58,14 @@ export function EventForm({ initialData, onSuccess }: EventFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">配布金額</label>
+          <Label>配布金額</Label>
           <div className="relative">
-            <input
+            <Input
               name="distributeAmount"
               type="number"
               required
               defaultValue={initialData?.distributeAmount ?? 100000}
-              className="focus:ring-primary/20 focus:border-primary w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm transition-all focus:ring-2 focus:outline-none"
+              className="pr-8"
             />
             <span className="absolute top-2 right-3 text-sm text-gray-400">円</span>
           </div>
@@ -80,7 +73,7 @@ export function EventForm({ initialData, onSuccess }: EventFormProps) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">開催日</label>
+          <Label>開催日</Label>
           <div className="relative">
             <div className="focus-within:ring-primary/20 focus-within:border-primary flex w-full items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-all focus-within:ring-2 focus-within:outline-none">
               <Calendar className="h-4 w-4 text-gray-400" />

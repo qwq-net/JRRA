@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/shared/ui';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -30,13 +31,15 @@ export function DeleteHorseButton({ horseId, horseName }: DeleteHorseButtonProps
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
-        <button
-          className="text-gray-400 transition-colors hover:text-red-600 disabled:opacity-50"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-gray-400 hover:text-red-600 disabled:opacity-50"
           title="削除"
           disabled={isDeleting}
         >
           <Trash2 size={18} />
-        </button>
+        </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="animate-in fade-in fixed inset-0 z-50 bg-black/50 duration-200" />
@@ -47,17 +50,12 @@ export function DeleteHorseButton({ horseId, horseName }: DeleteHorseButtonProps
           </AlertDialog.Description>
           <div className="mt-6 flex justify-end gap-3">
             <AlertDialog.Cancel asChild>
-              <button className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-hidden">
-                キャンセル
-              </button>
+              <Button variant="secondary">キャンセル</Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <button
-                onClick={handleDelete}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-all hover:bg-red-700 hover:shadow-md focus:outline-hidden active:scale-95"
-              >
+              <Button variant="destructive" onClick={handleDelete}>
                 削除する
-              </button>
+              </Button>
             </AlertDialog.Action>
           </div>
         </AlertDialog.Content>

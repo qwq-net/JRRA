@@ -7,10 +7,12 @@ import Link from 'next/link';
 interface Race {
   id: string;
   name: string;
+  raceNumber: number | null;
   location: string;
   distance: number;
   surface: string;
   date: string;
+  entries: unknown[];
 }
 
 interface Event {
@@ -57,15 +59,23 @@ export function EventAccordion({ events }: EventAccordionProps) {
                       href={`/admin/bets/${race.id}`}
                       className="flex items-center gap-8 px-6 py-3 pl-12 transition-colors hover:bg-gray-50"
                     >
-                      <div className="min-w-[300px]">
+                      <div className="flex min-w-[360px] items-center gap-3">
+                        <span className="flex h-6 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-sm font-bold text-gray-600">
+                          {race.raceNumber}R
+                        </span>
                         <span className="text-sm font-semibold text-gray-900">{race.name}</span>
                       </div>
                       <div className="min-w-[120px]">
                         <span className="text-sm text-gray-600">{race.location}</span>
                       </div>
-                      <div className="min-w-[100px]">
+                      <div className="min-w-[120px]">
                         <span className="text-sm text-gray-500">
                           {race.surface} {race.distance}m
+                        </span>
+                      </div>
+                      <div className="min-w-[80px]">
+                        <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-sm font-medium text-blue-700">
+                          {race.entries.length}頭
                         </span>
                       </div>
                     </Link>

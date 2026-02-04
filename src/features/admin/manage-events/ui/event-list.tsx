@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge, Button } from '@/shared/ui';
 import { useTransition } from 'react';
 import { updateEventStatus } from '../actions';
 import { EditEventDialog } from './edit-event-dialog';
@@ -48,17 +49,7 @@ export function EventList({ events }: { events: Event[] }) {
           {events.map((event) => (
             <tr key={event.id} className="transition-colors hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap">
-                <span
-                  className={`inline-flex rounded-full px-2.5 py-0.5 text-sm font-semibold ${
-                    event.status === 'ACTIVE'
-                      ? 'bg-green-100 text-green-700'
-                      : event.status === 'COMPLETED'
-                        ? 'bg-gray-100 text-gray-600'
-                        : 'bg-amber-100 text-amber-700'
-                  }`}
-                >
-                  {event.status === 'ACTIVE' ? '公開中' : event.status === 'COMPLETED' ? '終了済み' : '準備中'}
-                </span>
+                <Badge label={event.status} variant="status" />
               </td>
               <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900" title={event.name}>
                 {event.name}
@@ -71,40 +62,44 @@ export function EventList({ events }: { events: Event[] }) {
                 <div className="flex items-center justify-end gap-2">
                   <EditEventDialog event={event} />
                   {event.status === 'SCHEDULED' && (
-                    <button
+                    <Button
+                      size="sm"
                       disabled={isPending}
                       onClick={() => handleStatusChange(event.id, 'ACTIVE')}
-                      className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700 hover:shadow-md active:scale-95 disabled:opacity-50"
+                      className="bg-green-600 font-semibold text-white hover:bg-green-700"
                     >
                       Start
-                    </button>
+                    </Button>
                   )}
                   {event.status === 'ACTIVE' && (
                     <>
-                      <button
+                      <Button
+                        size="sm"
                         disabled={isPending}
                         onClick={() => handleStatusChange(event.id, 'SCHEDULED')}
-                        className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-amber-600 hover:shadow-md active:scale-95 disabled:opacity-50"
+                        className="bg-amber-500 font-semibold text-white hover:bg-amber-600"
                       >
                         Pause
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        size="sm"
                         disabled={isPending}
                         onClick={() => handleStatusChange(event.id, 'COMPLETED')}
-                        className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95 disabled:opacity-50"
+                        variant="destructive"
                       >
                         End
-                      </button>
+                      </Button>
                     </>
                   )}
                   {event.status === 'COMPLETED' && (
-                    <button
+                    <Button
+                      size="sm"
                       disabled={isPending}
                       onClick={() => handleStatusChange(event.id, 'ACTIVE')}
-                      className="rounded-lg bg-gray-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-gray-600 hover:shadow-md active:scale-95 disabled:opacity-50"
+                      className="bg-gray-500 font-semibold text-white hover:bg-gray-600"
                     >
                       Re-Open
-                    </button>
+                    </Button>
                   )}
                 </div>
               </td>

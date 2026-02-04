@@ -51,7 +51,7 @@ export function NameChangeForm({ initialName }: { initialName: string }) {
           英数字、ひらがな、カタカナ、漢字が使用可能です。特殊記号は使用できません。
         </p>
       </div>
-      <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={isPending}>
+      <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         登録
       </Button>

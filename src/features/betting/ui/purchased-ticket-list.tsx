@@ -1,7 +1,7 @@
 'use client';
 
+import { Badge } from '@/shared/ui';
 import { BET_TYPE_LABELS, BetType } from '@/types/betting';
-import { CheckCircle2, Clock, XCircle } from 'lucide-react';
 
 interface BetTicket {
   id: string;
@@ -36,6 +36,21 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
   const totalAmount = tickets.reduce((sum, ticket) => sum + ticket.amount, 0);
   const totalPayout = tickets.reduce((sum, ticket) => sum + (ticket.payout || 0), 0);
 
+  const getStatusBadge = (status: BetTicket['status']) => {
+    switch (status) {
+      case 'HIT':
+        return <Badge variant="status" label="的中" className="bg-red-100 text-red-800" />;
+      case 'LOST':
+        return <Badge variant="status" label="不的中" className="bg-gray-100 text-gray-500" />;
+      case 'PENDING':
+        return <Badge variant="status" label="待機中" className="bg-blue-100 text-blue-800" />;
+      case 'REFUNDED':
+        return <Badge variant="status" label="返還" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
@@ -59,7 +74,6 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
             key={ticket.id}
             className="relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
           >
-            {}
             <div
               className={`absolute top-0 bottom-0 left-0 w-1.5 ${
                 ticket.status === 'HIT' ? 'bg-red-500' : ticket.status === 'LOST' ? 'bg-gray-300' : 'bg-blue-500'
@@ -72,24 +86,7 @@ export function PurchasedTicketList({ tickets }: PurchasedTicketListProps) {
                   <span className="rounded bg-gray-100 px-2 py-0.5 text-sm font-bold text-gray-500">
                     {BET_TYPE_LABELS[ticket.type]}
                   </span>
-                  {ticket.status === 'HIT' && (
-                    <span className="flex items-center gap-1 text-sm font-bold text-red-600">
-                      <CheckCircle2 size={12} />
-                      的中
-                    </span>
-                  )}
-                  {ticket.status === 'LOST' && (
-                    <span className="flex items-center gap-1 text-sm font-bold text-gray-400">
-                      <XCircle size={12} />
-                      不的中
-                    </span>
-                  )}
-                  {ticket.status === 'PENDING' && (
-                    <span className="flex items-center gap-1 text-sm font-bold text-blue-500">
-                      <Clock size={12} />
-                      待機中
-                    </span>
-                  )}
+                  {getStatusBadge(ticket.status)}
                 </div>
 
                 <div className="flex items-center gap-3">

@@ -109,20 +109,19 @@ export default async function SokupatPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <div className="mb-1 flex items-center gap-2">
-                              <span className="rounded bg-gray-100 px-2 py-0.5 text-sm font-bold tracking-wider text-gray-700 uppercase">
-                                {race.location}
-                              </span>
-                              <span className="text-sm font-medium text-gray-400">{race.date}</span>
+                              <span className="text-sm font-bold text-gray-500">{race.location}</span>
+                              {race.raceNumber && (
+                                <span className="flex h-5 w-7 items-center justify-center rounded bg-gray-100 text-sm font-bold text-gray-600">
+                                  {race.raceNumber}R
+                                </span>
+                              )}
                               <Badge variant="status" label={STATUS_LABELS[race.status] || race.status} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900">
-                              {race.raceNumber ? `第${race.raceNumber}R ` : ''}
-                              {race.name}
-                            </h3>
+                            <h3 className="text-xl font-bold text-gray-900">{race.name}</h3>
                             <div className="mt-2 flex items-center gap-3 text-sm text-gray-500">
-                              <span>{race.distance}m</span>
-                              <span className="h-1 w-1 rounded-full bg-gray-300" />
                               <span>{race.surface}</span>
+                              <span className="h-1 w-1 rounded-full bg-gray-300" />
+                              <span>{race.distance}m</span>
                             </div>
                           </div>
                           <div className="bg-primary/10 text-primary hover:bg-primary flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:text-white">
