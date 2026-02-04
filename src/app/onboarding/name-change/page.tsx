@@ -1,6 +1,5 @@
 import { NameChangeForm } from '@/features/user/ui/name-change-form';
 import { auth } from '@/shared/config/auth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui';
 import { redirect } from 'next/navigation';
 
 export default async function OnboardingNameChangePage() {
@@ -15,20 +14,20 @@ export default async function OnboardingNameChangePage() {
   }
 
   return (
-    <div className="container mx-auto flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-lg border-none bg-white/90 shadow-2xl backdrop-blur-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">Welcome to JRRA!</CardTitle>
-          <CardDescription>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+        <div className="text-center">
+          <h1 className="text-primary text-2xl font-bold tracking-tight">Welcome to JRRA!</h1>
+          <p className="mt-2 text-sm text-gray-500">
             はじめに、ユーザー名を設定してください。
             <br />
             この名前は後から変更可能です。
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center">
+          </p>
+        </div>
+        <div className="flex flex-col items-center">
           <NameChangeForm initialName={session.user.name || ''} />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

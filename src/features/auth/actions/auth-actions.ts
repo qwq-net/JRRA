@@ -1,24 +1,25 @@
 'use server';
 
 import { db } from '@/shared/db';
-import { loginAttempts } from '@/shared/db/schema';
+import { guestCodes, users } from '@/shared/db/schema';
+import { redis } from '@/shared/lib/redis';
 import { getClientIp } from '@/shared/utils/get-client-ip';
 import { eq } from 'drizzle-orm';
 
-export async function checkUserLockStatus(username: string) {
-  if (!username) return { isLocked: false };
+export async function checkIpLockStatus() {
+  const ip = await getClientIp();
+  const identifier = `ratelimit:ip:${ip}`;
 
-  const attempt = await db.query.loginAttempts.findFirst({
-    where: eq(loginAttempts.identifier, username),
-  });
+  const data = await redis.get(identifier);
+  const attempt = data ? JSON.parse(data) : null;
 
   const now = new Date();
-  if (attempt?.lockedUntil && attempt.lockedUntil > now) {
-    const diff = attempt.lockedUntil.getTime() - now.getTime();
+  if (attempt?.lockedUntil && attempt.lockedUntil > now.getTime()) {
+    const diff = attempt.lockedUntil - now.getTime();
     const minutes = Math.ceil(diff / 60000);
     return {
       isLocked: true,
-      lockedUntil: attempt.lockedUntil,
+      lockedUntil: new Date(attempt.lockedUntil),
       remainingMinutes: minutes,
     };
   }
@@ -26,24 +27,27 @@ export async function checkUserLockStatus(username: string) {
   return { isLocked: false };
 }
 
-export async function checkIpLockStatus() {
-  const ip = await getClientIp();
-  const identifier = `IP:${ip}`;
+export async function validateGuestRegistration(code: string, username: string) {
+  const ipLock = await checkIpLockStatus();
+  if (ipLock.isLocked) return { error: 'RateLimitExceeded', remainingMinutes: ipLock.remainingMinutes };
 
-  const attempt = await db.query.loginAttempts.findFirst({
-    where: eq(loginAttempts.identifier, identifier),
+  // Check code
+  const guestCode = await db.query.guestCodes.findFirst({
+    where: eq(guestCodes.code, code),
   });
 
-  const now = new Date();
-  if (attempt?.lockedUntil && attempt.lockedUntil > now) {
-    const diff = attempt.lockedUntil.getTime() - now.getTime();
-    const minutes = Math.ceil(diff / 60000);
-    return {
-      isLocked: true,
-      lockedUntil: attempt.lockedUntil,
-      remainingMinutes: minutes,
-    };
+  if (!guestCode || guestCode.disabledAt) {
+    return { error: 'InvalidGuestCode' };
   }
 
-  return { isLocked: false };
+  // Check username
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.name, username),
+  });
+
+  if (existingUser) {
+    return { error: 'UsernameTaken' };
+  }
+
+  return { success: true };
 }

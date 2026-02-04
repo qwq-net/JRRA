@@ -90,7 +90,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="mt-1 text-sm text-gray-400">Administrator</span>
             </div>
           </div>
-          <LogoutButton />
+          <LogoutButton
+            className="w-full border-gray-600 bg-transparent text-gray-300 hover:bg-white/10 hover:text-white"
+            variant="outline"
+          />
         </div>
       </aside>
 

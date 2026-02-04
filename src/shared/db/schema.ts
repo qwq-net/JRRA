@@ -16,14 +16,6 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-export const loginAttempts = pgTable('login_attempt', {
-  identifier: text('identifier').primaryKey(),
-  attempts: integer('attempts').default(0).notNull(),
-  lockedUntil: timestamp('locked_until', { withTimezone: true }),
-  lastAttemptAt: timestamp('last_attempt_at', { withTimezone: true }).defaultNow(),
-  blockLevel: integer('block_level').default(0).notNull(),
-});
-
 export const roleEnum = pgEnum('role', ['USER', 'ADMIN', 'GUEST', 'TIPSTER', 'AI_TIPSTER', 'AI_USER']);
 
 export const users = pgTable('user', {

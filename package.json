@@ -13,6 +13,7 @@
     "db:reset": "npx tsx src/shared/db/reset.ts",
     "db:admin": "npx tsx src/shared/db/set-admin.ts",
     "db:setup": "npx drizzle-kit push && npm run db:seed",
+    "redis:reset": "npx tsx src/shared/lib/reset-redis.ts",
     "d:up": "docker compose up -d",
     "d:down": "docker compose down",
     "d:restart": "docker compose restart",
@@ -33,6 +34,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
+    "ioredis": "^5.9.2",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "next-auth": "^5.0.0-beta.30",
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/ioredis": "^4.28.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

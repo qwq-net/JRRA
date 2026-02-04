@@ -1,7 +1,10 @@
 import { signOut } from '@/shared/config/auth';
 import { Button } from '@/shared/ui';
+import { ComponentProps } from 'react';
 
-export function LogoutButton() {
+type LogoutButtonProps = ComponentProps<typeof Button>;
+
+export function LogoutButton({ className, variant = 'ghost', ...props }: LogoutButtonProps) {
   return (
     <form
       action={async () => {
@@ -9,7 +12,7 @@ export function LogoutButton() {
         await signOut({ redirectTo: '/login' });
       }}
     >
-      <Button variant="ghost" type="submit" className="font-bold">
+      <Button variant={variant} type="submit" className={className} {...props}>
         ログアウト
       </Button>
     </form>

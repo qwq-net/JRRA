@@ -49,18 +49,33 @@ Feature-Sliced Design (FSD) アーキテクチャを採用し、Next.js + Postgr
 
 `package.json` に定義されている主要なスクリプトです。
 
-| コマンド            | 説明                                        |
-| :------------------ | :------------------------------------------ |
-| `npm run dev`       | ローカルで開発サーバーを起動                |
-| `npm run d:up`      | Docker環境を起動 (バックグラウンド)         |
-| `npm run d:down`    | Docker環境を停止                            |
-| `npm run d:restart` | Docker環境を再起動                          |
-| `npm run d:logs`    | Dockerコンテナのログを表示                  |
-| `npm run d:clean`   | Docker環境を完全にリセット (Volume削除含む) |
-| `npm run db:setup`  | DBスキーマの適用とシードデータの投入        |
-| `npm run db:reset`  | DBのリセット                                |
-| `npm run check`     | 型チェックとフォーマッタの実行              |
-| `npm test`          | テストの実行 (Vitest)                       |
+| コマンド              | 説明                                        |
+| :-------------------- | :------------------------------------------ |
+| `npm run dev`         | ローカルで開発サーバーを起動                |
+| `npm run d:up`        | Docker環境を起動 (バックグラウンド)         |
+| `npm run d:down`      | Docker環境を停止                            |
+| `npm run d:restart`   | Docker環境を再起動                          |
+| `npm run d:logs`      | Dockerコンテナのログを表示                  |
+| `npm run d:clean`     | Docker環境を完全にリセット (Volume削除含む) |
+| `npm run db:setup`    | DBスキーマの適用とシードデータの投入        |
+| `npm run db:reset`    | DBのリセット                                |
+| `npm run redis:reset` | Redisデータのリセット                       |
+| `npm run check`       | 型チェックとフォーマッタの実行              |
+| `npm test`            | テストの実行 (Vitest)                       |
+
+### 管理者権限の設定
+
+以下のコマンドで、Userテーブルの最初のユーザーにADMIN権限を付与します。
+
+```
+npm run db:admin
+```
+
+または、以下で指定したユーザーにADMIN権限を付与します。
+
+```
+npm run db:admin -- --user=<username>
+```
 
 ## ディレクトリ構成
 

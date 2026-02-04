@@ -1,13 +1,42 @@
 import { db } from '@/shared/db';
 import * as schema from '@/shared/db/schema';
+import { redis } from '@/shared/lib/redis';
 import { getClientIp } from '@/shared/utils/get-client-ip';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Discord from 'next-auth/providers/discord';
 import { z } from 'zod';
+
+class RateLimitError extends CredentialsSignin {
+  code = 'RateLimitExceeded';
+}
+
+class InvalidGuestCodeError extends CredentialsSignin {
+  code = 'InvalidGuestCode';
+}
+
+class UsernameTakenError extends CredentialsSignin {
+  code = 'UsernameTaken';
+}
+
+class UserNotFoundError extends CredentialsSignin {
+  code = 'UserNotFound';
+}
+
+class UserSetupIncompleteError extends CredentialsSignin {
+  code = 'UserSetupIncomplete';
+}
+
+class InvalidPasswordError extends CredentialsSignin {
+  code = 'InvalidPassword';
+}
+
+class AccountDisabledError extends CredentialsSignin {
+  code = 'AccountDisabled';
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db, {
@@ -50,136 +79,142 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        const parsed = z
-          .object({
-            code: z.string().optional(),
-            username: z.string().min(1),
-            password: z.string().refine((val) => [...val].length >= 3 && [...val].length <= 6),
-          })
-          .safeParse(credentials);
+        try {
+          const parsed = z
+            .object({
+              code: z.string().optional(),
+              username: z.string().min(1),
+              password: z.string().refine((val) => [...val].length >= 3 && [...val].length <= 6),
+            })
+            .safeParse(credentials);
 
-        if (!parsed.success) return null;
-        const { code, username, password } = parsed.data;
+          if (!parsed.success) return null;
+          const { code, username, password } = parsed.data;
 
-        const ip = await getClientIp();
-        const identifier = `IP:${ip}`;
-        const now = new Date();
+          const ip = await getClientIp();
+          const identifier = `ratelimit:ip:${ip}`;
+          const now = Date.now();
 
-        const attemptRecord = await db.query.loginAttempts.findFirst({
-          where: eq(schema.loginAttempts.identifier, identifier),
-        });
+          const data = await redis.get(identifier);
+          const attemptRecord = data ? JSON.parse(data) : null;
 
-        if (attemptRecord?.lockedUntil && attemptRecord.lockedUntil > now) {
-          console.warn(`IP Limit Exceeded: ${identifier}`);
-          throw new Error('RateLimitExceeded');
-        }
-
-        const recordFailure = async () => {
-          const currentAttempts = (attemptRecord?.attempts || 0) + 1;
-          const currentBlockLevel = attemptRecord?.blockLevel || 0;
-
-          let lockedUntil: Date | null = null;
-          let newBlockLevel = currentBlockLevel;
-          let newAttempts = currentAttempts;
-
-          if (currentAttempts >= 5) {
-            const durations = [10, 60, 24 * 60];
-            const durationMinutes = durations[Math.min(currentBlockLevel, durations.length - 1)];
-            lockedUntil = new Date(Date.now() + durationMinutes * 60 * 1000);
-            newBlockLevel = currentBlockLevel + 1;
-            newAttempts = 0;
+          if (attemptRecord?.lockedUntil && attemptRecord.lockedUntil > now) {
+            console.warn(`IP Limit Exceeded: ${identifier}`);
+            throw new RateLimitError();
           }
 
-          await db
-            .insert(schema.loginAttempts)
-            .values({
-              identifier,
+          const recordFailure = async (isStrict = false) => {
+            const currentAttempts = (attemptRecord?.attempts || 0) + 1;
+            const currentBlockLevel = attemptRecord?.blockLevel || 0;
+
+            let lockedUntil: number | null = null;
+            let newBlockLevel = currentBlockLevel;
+            let newAttempts = currentAttempts;
+
+            const threshold = isStrict ? (currentBlockLevel > 0 ? 1 : 3) : 5;
+
+            if (currentAttempts >= threshold) {
+              let durationMinutes;
+              if (isStrict) {
+                const strictDurations = [60, 24 * 60];
+                durationMinutes = strictDurations[Math.min(currentBlockLevel, strictDurations.length - 1)];
+              } else {
+                const normalDurations = [10, 60, 24 * 60];
+                durationMinutes = normalDurations[Math.min(currentBlockLevel, normalDurations.length - 1)];
+              }
+
+              lockedUntil = Date.now() + durationMinutes * 60 * 1000;
+              newBlockLevel = currentBlockLevel + 1;
+              newAttempts = 0;
+            }
+
+            const newState = {
               attempts: newAttempts,
               blockLevel: newBlockLevel,
               lockedUntil,
-              lastAttemptAt: new Date(),
-            })
-            .onConflictDoUpdate({
-              target: schema.loginAttempts.identifier,
-              set: {
-                attempts: newAttempts,
-                blockLevel: newBlockLevel,
-                lockedUntil,
-                lastAttemptAt: new Date(),
-              },
+              lastAttemptAt: Date.now(),
+            };
+
+            await redis.set(identifier, JSON.stringify(newState), 'EX', 24 * 60 * 60);
+          };
+
+          if (code) {
+            const guestCode = await db.query.guestCodes.findFirst({
+              where: eq(schema.guestCodes.code, code),
             });
-        };
 
-        if (code) {
-          const guestCode = await db.query.guestCodes.findFirst({
-            where: eq(schema.guestCodes.code, code),
-          });
+            if (!guestCode || guestCode.disabledAt) {
+              console.warn(`Invalid guest code attempt: ${code}`);
+              await recordFailure(true);
+              throw new InvalidGuestCodeError();
+            }
 
-          if (!guestCode || guestCode.disabledAt) {
-            console.warn(`Invalid guest code attempt: ${code}`);
-            await recordFailure();
-            return null;
+            const existingUser = await db.query.users.findFirst({
+              where: eq(schema.users.name, username),
+            });
+
+            if (existingUser) {
+              console.warn(`Username taken during signup: ${username}`);
+              await recordFailure();
+              throw new UsernameTakenError();
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const [newUser] = await db
+              .insert(schema.users)
+              .values({
+                name: username,
+                role: 'GUEST',
+                guestCodeId: code,
+                password: hashedPassword,
+                isOnboardingCompleted: true,
+              })
+              .returning();
+
+            if (attemptRecord) {
+              await redis.del(identifier);
+            }
+            return newUser;
+          } else {
+            const existingUser = await db.query.users.findFirst({
+              where: eq(schema.users.name, username),
+            });
+
+            if (!existingUser) {
+              console.warn(`Login failed: user not found ${username}`);
+              await recordFailure();
+              throw new UserNotFoundError();
+            }
+
+            if (!existingUser.password) {
+              console.warn('User setup incomplete (no password)');
+              await recordFailure();
+              throw new UserSetupIncompleteError();
+            }
+
+            const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+            if (!isPasswordValid) {
+              console.warn('Invalid password attempt');
+              await recordFailure();
+              throw new InvalidPasswordError();
+            }
+
+            if (existingUser.disabledAt) {
+              console.warn('Disabled account attempt');
+              throw new AccountDisabledError();
+            }
+
+            if (attemptRecord) {
+              await redis.del(identifier);
+            }
+            return existingUser;
           }
-
-          const existingUser = await db.query.users.findFirst({
-            where: eq(schema.users.name, username),
-          });
-
-          if (existingUser) {
-            console.warn(`Username taken during signup: ${username}`);
-            await recordFailure();
-            return null;
+        } catch (error) {
+          if (error instanceof CredentialsSignin) {
+            throw error;
           }
-
-          const hashedPassword = await bcrypt.hash(password, 10);
-          const [newUser] = await db
-            .insert(schema.users)
-            .values({
-              name: username,
-              role: 'GUEST',
-              guestCodeId: code,
-              password: hashedPassword,
-              isOnboardingCompleted: true,
-            })
-            .returning();
-
-          if (attemptRecord) {
-            await db.delete(schema.loginAttempts).where(eq(schema.loginAttempts.identifier, identifier));
-          }
-          return newUser;
-        } else {
-          const existingUser = await db.query.users.findFirst({
-            where: eq(schema.users.name, username),
-          });
-
-          if (!existingUser) {
-            console.warn(`Login failed: user not found ${username}`);
-            await recordFailure();
-            return null;
-          }
-
-          if (!existingUser.password) {
-            console.warn('User setup incomplete (no password)');
-            await recordFailure();
-            return null;
-          }
-
-          const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-          if (!isPasswordValid) {
-            console.warn('Invalid password attempt');
-            await recordFailure();
-            return null;
-          }
-
-          if (existingUser.disabledAt) {
-            console.warn('Disabled account attempt');
-            return null;
-          }
-
-          if (attemptRecord) {
-            await db.delete(schema.loginAttempts).where(eq(schema.loginAttempts.identifier, identifier));
-          }
-          return existingUser;
+          console.error('Authorize error details:', error);
+          throw new Error('InternalServerError');
         }
       },
     }),
